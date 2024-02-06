@@ -11,7 +11,7 @@
           <p>product name: {{ merch?.label }}</p>
         </div>
 
-        <div>price: {{ merch?.price }}</div>
+        <div>price: xxx</div>
         <div>merch id: {{ merch?.id }}</div>
 
         <div class="w-full flex justify-center">
