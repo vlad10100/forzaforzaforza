@@ -8,7 +8,7 @@
     :width="size"
     :height="size"
     :class="mapDirections[direction]"
-    @click="$emit('click')"
+    @click="emit('click')"
   >
     <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
   </svg>
@@ -16,6 +16,8 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
+
+const emit = defineEmits(['click'])
 
 const { size } = defineProps({
   size: { type: String || Number, default: '24' },
