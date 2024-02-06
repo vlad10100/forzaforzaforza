@@ -50,11 +50,11 @@
 
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue'
-import { EmblaCarouselType } from 'embla-carousel'
+import type { EmblaCarouselType } from 'embla-carousel'
+import type { AutoplayType } from 'embla-carousel-autoplay'
 
 import emblaCarouselVue from 'embla-carousel-vue'
 import Autoplay from 'embla-carousel-autoplay'
-import { AutoplayType } from 'embla-carousel-autoplay'
 import ChevronIcon from './icons/IcChevron.vue'
 
 type slideType = {
