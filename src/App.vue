@@ -4,7 +4,6 @@
 
     <div class="overflow-y-auto scrollbar absolute w-full top-16" :class="navBarHeight">
       <RouterView />
-      <Footer />
     </div>
   </div>
 </template>
@@ -13,7 +12,6 @@
 import { computed, ref } from 'vue'
 import { useElementSize } from '@vueuse/core'
 import NavBar from './components/common/Navbar.vue'
-import Footer from './components/common/Footer.vue'
 
 const navBar = ref(null)
 const { height } = useElementSize(navBar)
