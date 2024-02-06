@@ -23,18 +23,14 @@
       <!-- SINGLETS -->
       <div>
         <h1 class="text-2xl my-5">FORZA Singlets</h1>
-        <div class="grid lg:grid-cols-3 grid-cols-2 gap-10 lg:mx-32 md:mx-20">
-          <div v-for="singlet in singlets" :key="singlet.value">
-            <div
-              class="w-auto mx-auto rounded-lg p-2 border border-gray-50 shadow-sm hover:border-gray-100 hover:shadow-md cursor-pointer duration-150 ease-in-out"
-            >
-              <img class="w-fit h-60 mx-auto object-contain" :src="`/singlets/${singlet.link}`" />
-              <div class="w-full px-5">
-                <h1>{{ singlet.label }}</h1>
-                <p class="text-right">₱ xxx</p>
-              </div>
-            </div>
-          </div>
+        <div class="grid lg:grid-cols-3 grid-cols-2 gap-10 lg:mx-20 md:mx-20">
+          <ItemCard
+            v-for="singlet in singlets"
+            :key="singlet.id"
+            :label="singlet.label"
+            :source="singlet.link"
+            @view-detail="viewDetail(singlet.id)"
+          />
         </div>
       </div>
     </div>
@@ -43,6 +39,8 @@
 
 <script setup lang="ts">
 import Carousel from '@/components/Carousel.vue'
+import ItemCard from '@/components/shop/ItemCard.vue'
+
 const carouselSlides = [
   { label: 'SLIDE 1', value: 'bg-gray-100', link: 'forza.svg' },
   { label: 'SLIDE 2', value: 'bg-gray-200', link: 'forzaforzaforza.svg' },
@@ -52,13 +50,17 @@ const carouselSlides = [
 ]
 
 const singlets = [
-  { label: 'Forza - Black Singlet', value: 1300, link: 'black-singlet.png' },
-  { label: 'Forza - Pink-Green Singlet', value: 1500, link: 'pink-singlet.png' },
-  { label: 'Forza - Black-Red Singlet', value: 1500, link: 'red-singlet.png' },
-  { label: 'Forza - Black-Violet Singlet', value: 1500, link: 'violet-singlet.png' },
-  { label: 'Forza - White Singlet', value: 1300, link: 'white-singlet.png' },
-  { label: 'Forza - Black-Teal Singlet', value: 1500, link: 'teal-singlet.png' }
+  { id: 1, label: 'Forza - Black Singlet', price: 1300, link: 'black-singlet.png' },
+  { id: 2, label: 'Forza - Pink-Green Singlet', price: 1500, link: 'pink-singlet.png' },
+  { id: 3, label: 'Forza - Black-Red Singlet', price: 1500, link: 'red-singlet.png' },
+  { id: 4, label: 'Forza - Black-Violet Singlet', price: 1500, link: 'violet-singlet.png' },
+  { id: 5, label: 'Forza - White Singlet', price: 1300, link: 'white-singlet.png' },
+  { id: 6, label: 'Forza - Black-Teal Singlet', price: 1500, link: 'teal-singlet.png' }
 ]
+
+const viewDetail = (id: Number) => {
+  console.log(id)
+}
 </script>
 
 <style scoped></style>
