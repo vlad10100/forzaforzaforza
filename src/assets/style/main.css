@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;300;400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+
+.scrollbar::-webkit-scrollbar {
+  width: 12px; /* width of the entire scrollbar */
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background: transparent; /* color of the tracking area */
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgb(100, 100, 100); /* color of the scroll thumb */
+  border-radius: 16px; /* roundness of the scroll thumb */
+  border: 3px solid white; /* creates padding around scroll thumb */
+}
+  
+  input[type='text'] {
+    outline: none;
+  }
+  
+  body {
+    font-family: 'Roboto Mono', monospace;
+  }
