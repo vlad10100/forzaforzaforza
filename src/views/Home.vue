@@ -31,7 +31,7 @@
               <img class="w-fit h-60 mx-auto object-contain" :src="`/singlets/${singlet.link}`" />
               <div class="w-full px-5">
                 <h1>{{ singlet.label }}</h1>
-                <p class="text-right">₱ {{ singlet.value.toLocaleString() }}</p>
+                <p class="text-right">₱ xxx</p>
               </div>
             </div>
           </div>
