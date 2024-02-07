@@ -24,10 +24,30 @@
                 </div>
               </RouterLink>
 
-              <div>
+              <div class="flex items-center gap-3 pl-5">
                 <button class="px-3 py-2 rounded-lg bg-yellow-400">
                   <p class="text-sm font-medium">Connect Now!</p>
                 </button>
+
+                <Dropdown>
+                  <template #button>
+                    <IcUser size="30"></IcUser>
+                  </template>
+                  <template #dropdown-options>
+                    <!-- Active: "bg-gray-100", Not Active: "" -->
+                    <div class="w-40">
+                      <a
+                        v-for="option in userDropdownOptions"
+                        :key="option.value"
+                        href="#"
+                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-slate-100"
+                        id="user-menu-item-0"
+                        >{{ option.label }}</a
+                      >
+                    </div>
+                  </template>
+                </Dropdown>
+                <IcShopCart class="cursor-pointer" :count="0" />
               </div>
             </div>
           </div>
@@ -81,7 +101,7 @@
       </div>
 
       <!-- MOBILE -->
-      <div class="lg:hidden pb-5" id="mobile-menu" v-if="isDropdownMenuVisible">
+      <div class="lg:hidden" id="mobile-menu" v-if="isDropdownMenuVisible">
         <div class="space-y-1 pb-3 pt-2">
           <RouterLink
             v-for="(link, index) in navLinks"
@@ -97,10 +117,30 @@
             </div>
           </RouterLink>
         </div>
-        <div
-          class="h-full cursor-pointer capitalize block border-l-4 hover:hover:border-yellow-400 bg-gray-50 hover:bg-yellow-100 py-2 pl-3 pr-4 text-base font-medium text-black"
-        >
-          <p>Connect Now!</p>
+        <div class="border-t border-gray-200 pt-4">
+          <div class="flex items-center justify-between px-4">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <div>
+                  <IcUser size="36" />
+                </div>
+              </div>
+              <div class="ml-3">
+                <div class="text-base font-medium text-gray-800">Username</div>
+                <div class="text-sm font-medium text-gray-500">username@email.com</div>
+              </div>
+            </div>
+            <IcShopCart class="cursor-pointer" />
+          </div>
+          <div class="mt-3 space-y-1">
+            <a
+              v-for="option in userDropdownOptions"
+              :key="option.value"
+              href="#"
+              class="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+              >{{ option.label }}</a
+            >
+          </div>
         </div>
       </div>
     </nav>
@@ -115,7 +155,9 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useWindowSize } from '@vueuse/core'
-
+import IcUser from '../icons/IcUser.vue'
+import IcShopCart from '../icons/IcShopCart.vue'
+import Dropdown from './Dropdown.vue'
 const { width } = useWindowSize()
 
 watch(
@@ -145,10 +187,29 @@ const navLinks = [
   {
     label: 'about us',
     value: '/about-us'
+  }
+]
+
+const userDropdownOptions = [
+  {
+    label: 'Sign In',
+    value: 'sign-in'
   },
   {
-    label: 'sign in',
-    value: '/sign-in'
+    label: 'Connect Now',
+    value: 'connect-now'
+  },
+  {
+    label: 'My Profile',
+    value: 'profile'
+  },
+  {
+    label: 'Settings',
+    value: 'settings'
+  },
+  {
+    label: 'Log out',
+    value: 'log-out'
   }
 ]
 </script>
