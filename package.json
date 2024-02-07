@@ -18,6 +18,7 @@
     "embla-carousel": "^8.0.0-rc22",
     "embla-carousel-autoplay": "^8.0.0-rc22",
     "embla-carousel-vue": "^8.0.0-rc22",
+    "firebase": "^10.8.0",
     "fuse.js": "^7.0.0",
     "pinia": "^2.1.7",
     "vue": "^3.4.15",
