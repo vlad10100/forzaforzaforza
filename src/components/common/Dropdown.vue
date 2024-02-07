@@ -12,6 +12,7 @@
       leave-to-class="transform opacity-0 scale-95"
     >
       <div
+        @click="isVisible = false"
         class="transition ease-in-out duration-200 absolute right-0 mt-2 z-10 origin-top-right rounded-md bg-white shadow-xl overflow-hidden"
         v-if="isVisible"
       >
