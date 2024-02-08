@@ -118,25 +118,34 @@
           </RouterLink>
         </div>
         <div class="border-t border-gray-200 pt-4">
-          <div class="flex items-center justify-between px-4">
-            <div class="flex items-center">
+          <div
+            class="flex items-center px-4 py-2"
+            :class="currentUser ? 'justify-between' : 'justify-end'"
+          >
+            <div class="flex items-center" v-if="currentUser">
               <div class="flex-shrink-0">
                 <div>
                   <IcUser size="36" />
                 </div>
               </div>
-              <div class="ml-3">
-                <div class="text-base font-medium text-gray-800">Username</div>
-                <div class="text-sm font-medium text-gray-500">username@email.com</div>
+              <div class="ml-3 my-2">
+                <div class="text-base font-medium text-gray-800">{{ currentUser.displayName }}</div>
+                <div class="text-sm font-medium text-gray-500">{{ currentUser.email }}</div>
               </div>
             </div>
             <div
               @click="handleClick('connect-now')"
-              class="text-base font-medium px-3 py-2 rounded-lg bg-yellow-400 cursor-pointer"
+              class="text-base font-medium px-3 py-2 rounded-lg bg-yellow-400 cursor-pointer hidden sm:flex"
             >
               Connect Now
             </div>
             <IcShopCart class="cursor-pointer" />
+          </div>
+          <div
+            @click="handleClick('connect-now')"
+            class="text-base font-medium mx-10 px-3 py-2 rounded-lg bg-yellow-400 cursor-pointer sm:hidden"
+          >
+            Connect Now
           </div>
 
           <div class="mt-3 space-y-1">
