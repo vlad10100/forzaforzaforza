@@ -25,7 +25,10 @@
               </RouterLink>
 
               <div class="flex items-center gap-3 pl-5">
-                <button class="px-3 py-2 rounded-lg bg-yellow-400">
+                <button
+                  class="px-3 py-2 rounded-lg bg-yellow-400"
+                  v-if="!currentUser || !currentUser.connected_to_strava"
+                >
                   <p class="text-sm font-medium">Connect Now!</p>
                 </button>
 
@@ -171,9 +174,10 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, computed } from 'vue'
-import { useWindowSize } from '@vueuse/core'
+import { now, useWindowSize } from '@vueuse/core'
 import { signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth'
-import { auth, provider } from '../../firebase'
+import { auth, provider, db } from '../../firebase'
+import { getDoc, doc, setDoc } from 'firebase/firestore'
 import { useRouter } from 'vue-router'
 
 import IcUser from '../icons/IcUser.vue'
@@ -221,40 +225,68 @@ const navLinks = [
 const userOptions = [
   {
     label: 'Sign In',
-    value: 'sign-in'
+    value: '/sign-in'
   },
   {
     label: 'My Profile',
-    value: 'profile'
+    value: '/profile'
   },
   {
     label: 'Settings',
-    value: 'settings'
+    value: '/settings'
   },
   {
     label: 'Log out',
-    value: 'log-out'
+    value: '/log-out'
   }
 ]
 
-onMounted(() => {
-  onAuthStateChanged(auth, (user) => {
+onMounted(async () => {
+  onAuthStateChanged(auth, async (user) => {
     if (!user) return
     currentUser.value = user
+    const currentAthlete = await getCurrentAthlete(user.uid)
+    currentUser.value['connected_to_strava'] = currentAthlete?.connected_to_strava || false
   })
 })
 
+const getCurrentAthlete = async (id: string) => {
+  if (!id) return
+  const athleteDoc = doc(db, 'athletes', id)
+  const resp = await getDoc(athleteDoc)
+  return resp.data()
+}
+
 const userDropdownOptions = computed(() => {
   if (currentUser.value) {
-    return userOptions.filter((item) => item.value !== 'sign-in')
+    return userOptions.filter((item) => item.value !== '/sign-in')
   }
-  return userOptions.filter((item) => item.value === 'sign-in')
+  return userOptions.filter((item) => item.value === '/sign-in')
 })
 
 const signIn = async () => {
   try {
     const result = await signInWithPopup(auth, provider)
     currentUser.value = result.user
+
+    const athlete = await getCurrentAthlete(result.user.uid)
+    if (athlete) return
+
+    // Create new athlete
+    const payload = {
+      username: result.user.displayName?.replace(/\s+/g, '_') || null,
+      connected_to_strava: false,
+      created_at: new Date(now()),
+      first_name: '',
+      last_name: '',
+      age: 0,
+      gender: '',
+      height: 0,
+      weight: 0,
+      strava_refresh_token: ''
+    }
+    const athleteDoc = doc(db, 'athletes', result.user.uid)
+    await setDoc(athleteDoc, payload)
   } catch (error) {
     console.log(error)
   } finally {
@@ -275,8 +307,9 @@ const logOut = async () => {
 
 const handleClick = (value: string) => {
   isDropdownMenuVisible.value = false
-  if (value === 'sign-in') signIn()
-  if (value === 'log-out') logOut()
+  if (value === '/sign-in') signIn()
+  if (value === '/log-out') logOut()
+  if (value === '/profile') router.push(value)
 }
 </script>
 
