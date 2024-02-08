@@ -290,7 +290,7 @@ const signIn = async () => {
   } catch (error) {
     console.log(error)
   } finally {
-    router.push('/')
+    router.push('/profile')
   }
 }
 
