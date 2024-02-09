@@ -4,7 +4,9 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
+import { useCommonStore } from '@/stores/common'
 
+const commonStore = useCommonStore()
 onMounted(() => {
   commonStore.isLoading = true
   setTimeout(() => {
