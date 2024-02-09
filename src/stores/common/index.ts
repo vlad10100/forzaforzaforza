@@ -8,7 +8,7 @@ export const useCommonStore = defineStore('commonStore', () => {
   const isFetchingUser = ref(false)
 
   const signedInUser = ref()
-  
+
   const loadSignedInUser = async () => {
     if (!signedInUser.value) {
       onAuthStateChanged(auth, async (user) => {
@@ -16,7 +16,7 @@ export const useCommonStore = defineStore('commonStore', () => {
         return signedInUser.value
       })
     }
-    return signedInUser.value 
+    return signedInUser.value
   }
 
   return { isLoading, isFetchingUser, signedInUser, loadSignedInUser }

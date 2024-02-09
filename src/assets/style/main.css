@@ -4,9 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
-
 .scrollbar::-webkit-scrollbar {
   width: 12px; /* width of the entire scrollbar */
 }
@@ -20,11 +17,11 @@
   border-radius: 16px; /* roundness of the scroll thumb */
   border: 3px solid white; /* creates padding around scroll thumb */
 }
-  
-  input[type='text'] {
-    outline: none;
-  }
-  
-  body {
-    font-family: 'Roboto Mono', monospace;
-  }
+
+input[type='text'] {
+  outline: none;
+}
+
+body {
+  font-family: 'Roboto Mono', monospace;
+}

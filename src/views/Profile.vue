@@ -1,7 +1,9 @@
 <template>
-  <div>
-    <div>ATHLETE</div>
-    <div v-if="athlete">
+  <div class="flex md:flex-row flex-col w-full mt-20 justify-center md:gap-10 gap-5">
+    <div class="h-60 w-48 mx-auto md:mx-0 border border-gray-100 shadow-lg rounded-es-lg">
+      ATHLETE
+    </div>
+    <div class="mx-auto md:mx-0" v-if="athlete">
       <p>username: {{ athlete.username }}</p>
       <p>first name: {{ athlete.first_name }}</p>
       <p>last name: {{ athlete.last_name }}</p>
