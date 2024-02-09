@@ -4,6 +4,7 @@
       ATHLETE
     </div>
     <div class="mx-auto md:mx-0" v-if="athlete">
+      <TextInput></TextInput>
       <p>username: {{ athlete.username }}</p>
       <p>first name: {{ athlete.first_name }}</p>
       <p>last name: {{ athlete.last_name }}</p>
@@ -17,9 +18,11 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch, watchEffect } from 'vue'
+import { onMounted, ref, watchEffect } from 'vue'
 import { useAthleteStore } from '@/stores/athlete'
 import { useCommonStore } from '@/stores/common'
+import TextInput from '@/components/inputs/TextInput.vue'
+import CheckBox from '@/components/inputs/CheckBox.vue'
 
 const athleteStore = useAthleteStore()
 const commonStore = useCommonStore()

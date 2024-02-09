@@ -45,10 +45,15 @@ import ItemCard from '@/components/shop/ItemCard.vue'
 import Page from './layout/Page.vue'
 import router from '@/router'
 
-import { onMounted } from 'vue'
+import { onMounted, watchEffect } from 'vue'
 import { useCommonStore } from '@/stores/common'
 
 const commonStore = useCommonStore()
+watchEffect(() => {
+  if (!commonStore.isFetchingUser) {
+    commonStore.isLoading = false
+  }
+})
 onMounted(() => {
   commonStore.isLoading = true
   setTimeout(() => {

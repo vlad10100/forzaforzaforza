@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Page from './layout/Page.vue'
 import { useMerchendiseStore } from '@/stores/shop'
@@ -35,6 +35,11 @@ import IcChevron from '@/components/icons/IcChevron.vue'
 import { useCommonStore } from '@/stores/common'
 
 const commonStore = useCommonStore()
+watchEffect(() => {
+  if (!commonStore.isFetchingUser) {
+    commonStore.isLoading = false
+  }
+})
 onMounted(() => {
   commonStore.isLoading = true
   setTimeout(() => {

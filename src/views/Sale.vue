@@ -3,10 +3,15 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, watchEffect } from 'vue'
 import { useCommonStore } from '@/stores/common'
 
 const commonStore = useCommonStore()
+watchEffect(() => {
+  if (!commonStore.isFetchingUser) {
+    commonStore.isLoading = false
+  }
+})
 onMounted(() => {
   commonStore.isLoading = true
   setTimeout(() => {
