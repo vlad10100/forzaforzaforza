@@ -179,6 +179,7 @@ import { signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth'
 import { auth, provider, db } from '../../firebase'
 import { getDoc, doc, setDoc } from 'firebase/firestore'
 import { useRouter } from 'vue-router'
+import { useAthleteStore } from '../../stores/athlete'
 
 import IcUser from '../icons/IcUser.vue'
 import IcShopCart from '../icons/IcShopCart.vue'
@@ -186,6 +187,7 @@ import Dropdown from './Dropdown.vue'
 
 const { width } = useWindowSize()
 const router = useRouter()
+const store = useAthleteStore()
 
 const currentUser = ref()
 
@@ -245,17 +247,10 @@ onMounted(async () => {
   onAuthStateChanged(auth, async (user) => {
     if (!user) return
     currentUser.value = user
-    const currentAthlete = await getCurrentAthlete(user.uid)
+    const currentAthlete = await store.loadAthlete(user.uid)
     currentUser.value['connected_to_strava'] = currentAthlete?.connected_to_strava || false
   })
 })
-
-const getCurrentAthlete = async (id: string) => {
-  if (!id) return
-  const athleteDoc = doc(db, 'athletes', id)
-  const resp = await getDoc(athleteDoc)
-  return resp.data()
-}
 
 const userDropdownOptions = computed(() => {
   if (currentUser.value) {
@@ -269,7 +264,7 @@ const signIn = async () => {
     const result = await signInWithPopup(auth, provider)
     currentUser.value = result.user
 
-    const athlete = await getCurrentAthlete(result.user.uid)
+    const athlete = await store.loadAthlete(result.user.uid)
     if (athlete) return
 
     // Create new athlete

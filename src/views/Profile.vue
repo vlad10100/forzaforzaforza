@@ -19,17 +19,18 @@ import { onMounted, ref } from 'vue'
 import { auth, db } from '../firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 import { getDoc, doc } from 'firebase/firestore'
+import { useCommonStore } from '../stores/common'
 
-const isLoading = ref(false)
+const store = useCommonStore()
 const athlete = ref()
 
 onMounted(async () => {
   onAuthStateChanged(auth, async (user) => {
     if (!user) return
-    isLoading.value = true
+    store.isLoading = true
     const currentAthlete = await getCurrentAthlete(user.uid)
     athlete.value = currentAthlete
-    isLoading.value = false
+    store.changeLoadingStatus()
   })
 })
 

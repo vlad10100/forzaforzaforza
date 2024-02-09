@@ -33,6 +33,12 @@ import Page from './layout/Page.vue'
 import { useMerchendiseStore } from '@/stores/shop'
 import IcChevron from '@/components/icons/IcChevron.vue'
 
+import { useLoading } from '@/composables'
+
+onMounted(() => {
+  useLoading()
+})
+
 type Merchendise = {
   id: Number
   category: String
