@@ -19,7 +19,7 @@
     >
       <!-- PREFIX -->
       <div v-if="prefix" :class="{ 'border-r py-2': dividerLeft }">
-        <slot name="prefix">
+        <slot name="prefix" :suffix="prefix">
           <p class="text-sm px-2">{{ prefix }}</p>
         </slot>
       </div>
@@ -36,7 +36,7 @@
 
       <!-- SUFFIX -->
       <div v-if="suffix" :class="{ 'border-l py-2': dividerRight }">
-        <slot name="suffix">
+        <slot name="suffix" :suffix="suffix">
           <p class="text-sm px-2">{{ suffix }}</p>
         </slot>
       </div>
