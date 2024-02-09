@@ -32,11 +32,15 @@ import { useRoute, useRouter } from 'vue-router'
 import Page from './layout/Page.vue'
 import { useMerchendiseStore } from '@/stores/shop'
 import IcChevron from '@/components/icons/IcChevron.vue'
+import { useCommonStore } from '@/stores/common'
 
-import { useLoading } from '@/composables'
-
+const commonStore = useCommonStore()
 onMounted(() => {
-  useLoading()
+  commonStore.isLoading = true
+  setTimeout(() => {
+    if (commonStore.isFetchingUser) return
+    commonStore.isLoading = false
+  }, 1000)
 })
 
 type Merchendise = {

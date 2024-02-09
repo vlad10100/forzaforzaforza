@@ -15,31 +15,30 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { auth, db } from '../firebase'
-import { onAuthStateChanged } from 'firebase/auth'
-import { getDoc, doc } from 'firebase/firestore'
-import { useCommonStore } from '../stores/common'
+import { onMounted, ref, watchEffect } from 'vue'
+import { useAthleteStore } from '@/stores/athlete'
+import { useCommonStore } from '@/stores/common'
 
-const store = useCommonStore()
+const athleteStore = useAthleteStore()
+const commonStore = useCommonStore()
+
 const athlete = ref()
 
-onMounted(async () => {
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) return
-    store.isLoading = true
-    const currentAthlete = await getCurrentAthlete(user.uid)
-    athlete.value = currentAthlete
-    store.changeLoadingStatus()
-  })
+watchEffect(async () => {
+  if (!commonStore.isFetchingUser) {
+    commonStore.isLoading = true
+    athlete.value = await athleteStore.loadAthlete(commonStore.signedInUser.uid)
+    commonStore.isLoading = false
+  }
 })
 
-const getCurrentAthlete = async (id: string) => {
-  if (!id) return
-  const athleteDoc = doc(db, 'athletes', id)
-  const resp = await getDoc(athleteDoc)
-  return resp.data()
-}
+onMounted(() => {
+  commonStore.isLoading = true
+  setTimeout(() => {
+    if (commonStore.isFetchingUser) return
+    commonStore.isLoading = false
+  }, 1000)
+})
 </script>
 
 <style scoped></style>

@@ -173,23 +173,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { now, useWindowSize } from '@vueuse/core'
-import { signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth'
-import { auth, provider, db } from '../../firebase'
-import { getDoc, doc, setDoc } from 'firebase/firestore'
+import { signInWithPopup, signOut } from 'firebase/auth'
+import { auth, provider, db } from '@/firebase'
+import { doc, setDoc } from 'firebase/firestore'
 import { useRouter } from 'vue-router'
-import { useAthleteStore } from '../../stores/athlete'
+import { useAthleteStore } from '@/stores/athlete'
+import { useCommonStore } from '@/stores/common'
 
-import IcUser from '../icons/IcUser.vue'
-import IcShopCart from '../icons/IcShopCart.vue'
-import Dropdown from './Dropdown.vue'
+import IcUser from '@/components/icons/IcUser.vue'
+import IcShopCart from '@/components/icons/IcShopCart.vue'
+import Dropdown from '@/components/common/Dropdown.vue'
 
 const { width } = useWindowSize()
 const router = useRouter()
-const store = useAthleteStore()
-
-const currentUser = ref()
+const athleteStore = useAthleteStore()
+const commonStore = useCommonStore()
 
 watch(
   () => width.value,
@@ -243,13 +243,8 @@ const userOptions = [
   }
 ]
 
-onMounted(async () => {
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) return
-    currentUser.value = user
-    const currentAthlete = await store.loadAthlete(user.uid)
-    currentUser.value['connected_to_strava'] = currentAthlete?.connected_to_strava || false
-  })
+const currentUser = computed(() => {
+  return commonStore.signedInUser
 })
 
 const userDropdownOptions = computed(() => {
@@ -262,9 +257,11 @@ const userDropdownOptions = computed(() => {
 const signIn = async () => {
   try {
     const result = await signInWithPopup(auth, provider)
-    currentUser.value = result.user
+    commonStore.signedInUser = result.user
 
-    const athlete = await store.loadAthlete(result.user.uid)
+    const athlete = await athleteStore.loadAthlete(result.user.uid)
+    commonStore.signedInUser['connected_to_strava'] = athlete?.connected_to_strava || false
+
     if (athlete) return
 
     // Create new athlete
@@ -292,7 +289,7 @@ const signIn = async () => {
 const logOut = async () => {
   try {
     await signOut(auth)
-    currentUser.value = null
+    commonStore.signedInUser = null
   } catch (error) {
     console.log(error)
   } finally {

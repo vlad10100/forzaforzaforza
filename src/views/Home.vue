@@ -44,11 +44,17 @@ import Carousel from '@/components/Carousel.vue'
 import ItemCard from '@/components/shop/ItemCard.vue'
 import Page from './layout/Page.vue'
 import router from '@/router'
-import { onMounted } from 'vue'
-import { useLoading } from '@/composables'
 
+import { onMounted } from 'vue'
+import { useCommonStore } from '@/stores/common'
+
+const commonStore = useCommonStore()
 onMounted(() => {
-  useLoading()
+  commonStore.isLoading = true
+  setTimeout(() => {
+    if (commonStore.isFetchingUser) return
+    commonStore.isLoading = false
+  }, 1000)
 })
 
 const carouselSlides = [

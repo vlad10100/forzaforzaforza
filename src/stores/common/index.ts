@@ -1,11 +1,23 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { onAuthStateChanged } from 'firebase/auth'
+import { auth } from '@/firebase'
 
 export const useCommonStore = defineStore('commonStore', () => {
   const isLoading = ref(false)
-  const changeLoadingStatus = () => {
-    isLoading.value = !isLoading.value
+  const isFetchingUser = ref(false)
+
+  const signedInUser = ref()
+  
+  const loadSignedInUser = async () => {
+    if (!signedInUser.value) {
+      onAuthStateChanged(auth, async (user) => {
+        signedInUser.value = user
+        return signedInUser.value
+      })
+    }
+    return signedInUser.value 
   }
 
-  return { isLoading, changeLoadingStatus }
+  return { isLoading, isFetchingUser, signedInUser, loadSignedInUser }
 })

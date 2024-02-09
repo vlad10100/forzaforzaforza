@@ -4,7 +4,7 @@
 
     <div class="overflow-y-auto scrollbar absolute w-full top-16" :class="navBarHeight">
       <RouterView />
-      <div class="fixed inset-0 bg-white z-50 bg-opacity-75 top-16" v-if="store.isLoading">
+      <div class="fixed inset-0 bg-white z-50 bg-opacity-75 top-16" v-if="commonStore.isLoading">
         <div class="h-full flex items-center justify-center">
           <Loader size="200" />
         </div>
@@ -14,15 +14,27 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useElementSize } from '@vueuse/core'
 import { useCommonStore } from './stores/common'
 import NavBar from './components/common/Navbar.vue'
 import Loader from './components/common/Loader.vue'
+import { getSignedInUser } from '@/composables'
+import { useAthleteStore } from './stores/athlete'
 
 const navBar = ref(null)
-const store = useCommonStore()
+const commonStore = useCommonStore()
+const athleteStore = useAthleteStore()
 const { height } = useElementSize(navBar)
+
+onMounted(async () => {
+  commonStore.isFetchingUser = true
+  const user = await getSignedInUser()
+  commonStore.signedInUser = user
+  const athlete = await athleteStore.loadAthlete(commonStore.signedInUser.uid)
+  commonStore.signedInUser['connected_to_strava'] = athlete?.connected_to_strava || false
+  commonStore.isFetchingUser = false
+})
 
 const navBarHeight = computed(() => {
   if (height.value < 100) {

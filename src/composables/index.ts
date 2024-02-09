@@ -1,16 +1,25 @@
 import { nextTick } from 'vue'
 import { useCommonStore } from '@/stores/common'
+import { auth } from '@/firebase'
+import { onAuthStateChanged } from 'firebase/auth'
 
-const useLoading = () => {
-  const store = useCommonStore()
-
-  store.isLoading = true
-  nextTick(() => {
-    setTimeout(() => {
-      store.changeLoadingStatus()
-    }, 1000)
-  })
-
+const getSignedInUser = async() => {
+  try {
+    const user = await new Promise((resolve, reject) => {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          resolve(user);
+        } else {
+          reject(new Error('User not authenticated.'));
+        }
+      });
+    });
+    return user
+  } catch (error) {
+    console.error('Error in onAuthStateChanged:', error)
+    // Handle error accordingly
+  }
 }
 
-export { useLoading }
+
+export { getSignedInUser }
