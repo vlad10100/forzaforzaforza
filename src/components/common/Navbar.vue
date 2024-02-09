@@ -257,6 +257,7 @@ const userDropdownOptions = computed(() => {
 const signIn = async () => {
   try {
     const result = await signInWithPopup(auth, provider)
+    commonStore.isLoading = true
     commonStore.signedInUser = result.user
 
     const athlete = await athleteStore.loadAthlete(result.user.uid)

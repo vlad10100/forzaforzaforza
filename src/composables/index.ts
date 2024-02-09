@@ -10,7 +10,7 @@ const getSignedInUser = async() => {
         if (user) {
           resolve(user);
         } else {
-          reject(new Error('User not authenticated.'));
+          resolve(null)
         }
       });
     });

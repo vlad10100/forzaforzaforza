@@ -30,6 +30,11 @@ const { height } = useElementSize(navBar)
 onMounted(async () => {
   commonStore.isFetchingUser = true
   const user = await getSignedInUser()
+  if (!user) {
+    commonStore.isFetchingUser = false
+    commonStore.isLoading = false
+    return
+  }
   commonStore.signedInUser = user
   const athlete = await athleteStore.loadAthlete(commonStore.signedInUser.uid)
   commonStore.signedInUser['connected_to_strava'] = athlete?.connected_to_strava || false

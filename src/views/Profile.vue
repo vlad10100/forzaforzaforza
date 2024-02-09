@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watchEffect } from 'vue'
+import { onMounted, ref, watch, watchEffect } from 'vue'
 import { useAthleteStore } from '@/stores/athlete'
 import { useCommonStore } from '@/stores/common'
 
@@ -27,6 +27,10 @@ const athlete = ref()
 watchEffect(async () => {
   if (!commonStore.isFetchingUser) {
     commonStore.isLoading = true
+    if (!commonStore.signedInUser) {
+      commonStore.isLoading = false
+      return
+    }
     athlete.value = await athleteStore.loadAthlete(commonStore.signedInUser.uid)
     commonStore.isLoading = false
   }
