@@ -30,9 +30,7 @@
     </svg>
 
     <div class="mt-4">
-      <slot>
-        <p>Loading...</p>
-      </slot>
+      <slot> </slot>
     </div>
   </div>
 </template>

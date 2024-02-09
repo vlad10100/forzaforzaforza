@@ -6,7 +6,7 @@
       <RouterView />
       <div class="fixed inset-0 bg-white z-50 bg-opacity-75 top-16" v-if="store.isLoading">
         <div class="h-full flex items-center justify-center">
-          <Loader size="200"><p class="text-2xl">Loading...</p></Loader>
+          <Loader size="200" />
         </div>
       </div>
     </div>
