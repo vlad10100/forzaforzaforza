@@ -3,7 +3,7 @@
     <div class="md:-rotate-90 md:absolute md:-left-10 md:bottom-16 p-10">
       <img class="w-44 h-auto" src="/logo/forza_logo.svg" />
     </div>
-    <div class="md:flex md:justify-evenly md:space-y-0 md:pt-16 p-10 space-y-10">
+    <div class="md:flex md:justify-evenly md:space-y-0 md:pt-16 md:pb-0 p-10 space-y-10 pb-40">
       <div>
         <h3 class="text-xl font-medium">Customer Care</h3>
         <p>Terms & Conditions</p>
