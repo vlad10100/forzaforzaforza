@@ -1,8 +1,8 @@
 <template>
-  <div class="overflow-hidden">
+  <div class="overflow-hidden relative">
     <NavBar ref="navBar" />
 
-    <div class="overflow-y-auto scrollbar absolute w-full top-16" :class="navBarHeight">
+    <div class="overflow-y-auto scrollbar fixed w-full top-16" :class="navBarHeight">
       <RouterView />
       <div class="fixed inset-0 bg-white z-50 bg-opacity-75 top-16" v-if="commonStore.isLoading">
         <div class="h-full flex items-center justify-center">
