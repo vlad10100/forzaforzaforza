@@ -1,9 +1,14 @@
 <template>
   <div>
-    <DatePicker v-model="date" color="yellow">
+    <DatePicker v-model="date" color="gray">
       <template v-slot="{ inputValue, inputEvents }">
         <div class="space-y-2">
-          <TextInput name="date-input" v-on="inputEvents" :model-value="inputValue" />
+          <TextInput
+            name="date-input"
+            :label="label"
+            v-on="inputEvents"
+            :model-value="inputValue"
+          />
         </div>
       </template>
     </DatePicker>
@@ -18,6 +23,10 @@ import 'v-calendar/style.css'
 
 const date = ref(new Date())
 const emit = defineEmits(['update:modelValue'])
+
+const { label } = defineProps({
+  label: { type: String }
+})
 
 watch(
   () => date.value,
