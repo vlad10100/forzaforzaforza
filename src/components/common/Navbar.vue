@@ -276,6 +276,7 @@ const signIn = async () => {
       gender: '',
       height: 0,
       weight: 0,
+      birthday: '',
       strava_refresh_token: ''
     }
     const athleteDoc = doc(db, 'athletes', result.user.uid)
