@@ -6,7 +6,7 @@
           USER
         </div>
         <p
-          v-if="athlete.connected_to_strava"
+          v-if="!athlete.connected_to_strava"
           class="text-black text-center py-4 hover:font-medium hover:text-yellow-500 cursor-pointer duration-300 ease-in-out"
           @click="connectToStrava"
         >
@@ -14,26 +14,56 @@
         </p>
       </div>
       <div class="mx-auto md:mx-0 md:w-80 sm:w-96 w-4/5 space-y-2">
-        <TextInput label="Username" v-model="athlete.username" />
-        <TextInput label="First name" v-model="athlete.first_name" />
-        <TextInput label="Lase name" v-model="athlete.last_name" />
-        <TextInput label="Age" v-model="athlete.age" />
+        <TextInput
+          label="Username"
+          v-model="athlete.username"
+          @blur="blur('username')"
+          :error-messages="usernameError.username"
+        />
+        <TextInput
+          label="First name"
+          v-model="athlete.first_name"
+          @blur="blur('first_name')"
+          :error-messages="firstNameError.first_name"
+        />
+        <TextInput
+          label="Last name"
+          v-model="athlete.last_name"
+          @blur="blur('last_name')"
+          :error-messages="lastNameError.last_name"
+        />
+        <div class="flex gap-3 justify-evenly">
+          <Calendar
+            class="w-full"
+            v-model="athlete.birthday"
+            label="Birthday"
+            @blur="blur('birthday')"
+            :error-messages="birthdayError.birthday"
+            :get-difference="true"
+            @get-difference="handleDateDifference"
+          />
+          <div class="w-full">
+            <p>Age:</p>
+            <p class="text-end text-sm py-2">{{ athlete.age || '-' }}</p>
+          </div>
+        </div>
 
         <div class="py-2">
           <p class="text-sm mb-1">Gender:</p>
           <div class="flex flex-wrap items-center justify-between">
             <div
-              class="flex items-center gap-2 text-xs"
+              class="flex items-center gap-2 text-xs cursor-pointer"
               v-for="gender in GENDER"
               :key="gender.value"
               @click="selectedGender = gender.value"
             >
-              <p>{{ gender.label }}</p>
               <CheckBox
+                size="extra_small"
                 :isCheckbox="false"
                 :checked="selectedGender === gender.value"
                 borderStyle="circle"
               />
+              <p>{{ gender.label }}</p>
             </div>
           </div>
         </div>
@@ -64,13 +94,27 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watchEffect } from 'vue'
+import { computed, onMounted, ref, watchEffect } from 'vue'
+import { useRouter } from 'vue-router'
+
+import { db } from '@/firebase'
+import { doc, updateDoc } from 'firebase/firestore'
+
 import { useAthleteStore } from '@/stores/athlete'
 import { useCommonStore } from '@/stores/common'
+
+import { useVuelidate } from '@vuelidate/core'
+import { required, minLength, maxLength, helpers, alpha } from '@vuelidate/validators'
+import {
+  useUsernameValidation,
+  useDateValidation,
+  useValidationErrors
+} from '@/composables/vuelidate'
+
 import Page from './layout/Page.vue'
 import TextInput from '@/components/inputs/TextInput.vue'
 import CheckBox from '@/components/inputs/CheckBox.vue'
-import { useRouter } from 'vue-router'
+import Calendar from '@/components/inputs/Calendar.vue'
 
 const GENDER = [
   { label: 'male', value: 'male' },
@@ -85,6 +129,14 @@ const router = useRouter()
 const athlete = ref()
 const selectedGender = ref('')
 
+onMounted(() => {
+  commonStore.isLoading = true
+  setTimeout(() => {
+    if (commonStore.isFetchingUser) return
+    commonStore.isLoading = false
+  }, 1000)
+})
+
 watchEffect(async () => {
   if (!commonStore.isFetchingUser) {
     commonStore.isLoading = true
@@ -97,28 +149,88 @@ watchEffect(async () => {
       router.push('/')
       return
     }
-    data.weight = data.weight === 0 ? null : data.weight
-    data.height = data.height === 0 ? null : data.height
+
     data.age = data.age === 0 ? null : data.age
     athlete.value = data
     commonStore.isLoading = false
   }
 })
 
-onMounted(() => {
-  commonStore.isLoading = true
-  setTimeout(() => {
-    if (commonStore.isFetchingUser) return
-    commonStore.isLoading = false
-  }, 1000)
+const rules = computed(() => {
+  return {
+    athlete: {
+      username: {
+        required: helpers.withMessage('This field is required.', required),
+        useUsernameValidation: helpers.withMessage(
+          'Username contains invalid character.',
+          useUsernameValidation
+        ),
+        minLength: helpers.withMessage(
+          'This username must have at least 6 characters.',
+          minLength(6)
+        ),
+        maxLength: helpers.withMessage(
+          'This username has a maximum of 16 characters.',
+          maxLength(16)
+        )
+      },
+      first_name: {
+        required: helpers.withMessage('This field is required.', required),
+        alpha: helpers.withMessage('This field can contain only letters.', alpha)
+      },
+      last_name: {
+        required: helpers.withMessage('This field is required.', required),
+        alpha: helpers.withMessage('This field can contain only letters.', alpha)
+      },
+      birthday: {
+        required: helpers.withMessage('This field is required.', required),
+        useDateValidation: helpers.withMessage('Please input a valid date.', useDateValidation)
+      }
+    }
+  }
 })
+const v$ = useVuelidate(rules, { athlete })
 
-const saveChanges = () => {
-  console.log(athlete.value.username)
+const blur = (field: string) => {
+  v$.value.athlete[field].$touch()
+}
+
+const usernameError = computed((): { username: string } =>
+  useValidationErrors(v$.value.athlete.username.$errors)
+)
+const firstNameError = computed((): { first_name: string } =>
+  useValidationErrors(v$.value.athlete.first_name.$errors)
+)
+const lastNameError = computed((): { last_name: string } =>
+  useValidationErrors(v$.value.athlete.last_name.$errors)
+)
+const birthdayError = computed((): { birthday: string } =>
+  useValidationErrors(v$.value.athlete.birthday.$errors)
+)
+
+const saveChanges = async () => {
+  v$.value.athlete.$touch()
+  if (v$.value.athlete.$invalid) return
+  console.log(athlete.value.birthday, typeof athlete.value.birthday)
+  const athleteDoc = doc(db, 'athletes', commonStore.signedInUser.uid)
+
+  try {
+    commonStore.isLoading = true
+    await updateDoc(athleteDoc, athlete.value)
+  } catch (error) {
+    console.log(error)
+  } finally {
+    commonStore.isLoading = false
+  }
 }
 
 const connectToStrava = () => {
   console.log('connectToStrava')
+}
+
+const handleDateDifference = (date: { years: number; months: number; days: number }) => {
+  const parsedAge = `${date.years} years, ${date.months} mo.`
+  athlete.value.age = parsedAge
 }
 </script>
 

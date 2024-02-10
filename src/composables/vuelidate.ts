@@ -16,7 +16,10 @@ export const useUsernameValidation = (value: string) => {
   return pattern.test(value)
 } 
 
-export const useDateValidation = (value: string) => {
-  const pattern = /^(0[1-9]|1[0-2])\/(0[1-9]|[1-2][0-9]|3[01])\/(19|20)\d{2}$/
-  return pattern.test(value)
-} 
+export const useDateValidation = (date: Date) => {
+  const currentDate = new Date()
+  const currentYear = currentDate.getFullYear() 
+  const year = date.getFullYear()
+  return currentYear > year
+}
+

@@ -262,8 +262,10 @@ const signIn = async () => {
 
     const athlete = await athleteStore.loadAthlete(result.user.uid)
     commonStore.signedInUser['connected_to_strava'] = athlete?.connected_to_strava || false
-
-    if (athlete) return
+    if (athlete?.first_name && athlete?.last_name) {
+      router.push('/run')
+      return
+    }
 
     // Create new athlete
     const payload = {
@@ -276,15 +278,14 @@ const signIn = async () => {
       gender: '',
       height: 0,
       weight: 0,
-      birthday: '',
+      birthday: null,
       strava_refresh_token: ''
     }
     const athleteDoc = doc(db, 'athletes', result.user.uid)
     await setDoc(athleteDoc, payload)
+    router.push('/profile')
   } catch (error) {
     console.log(error)
-  } finally {
-    router.push('/profile')
   }
 }
 
