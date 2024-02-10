@@ -26,7 +26,7 @@
       <!-- TEXT INPUT -->
       <input
         class="w-full py-2 px-3 text-sm rounded-md"
-        type="text"
+        :type="typeof modelValue !== 'number' ? 'text' : 'number'"
         :placeholder="placeholder"
         @focus="focus"
         @blur="blur"
@@ -46,7 +46,7 @@
       <div v-if="inputState.error" class="w-full">
         <p class="text-xs w-full text-red-500">{{ inputState.errorMessage }}</p>
       </div>
-      <div class="w-full" v-if="maxCharacters">
+      <div class="w-full" v-if="maxCharacters && typeof modelValue !== 'number'">
         <p
           class="text-xs text-right"
           :class="{ 'text-red-500': (modelValue?.length || 0) > parseInt(maxCharacters) }"
@@ -86,7 +86,7 @@ const props = defineProps({
   label: { type: String },
   info: { type: String },
   placeholder: { type: String },
-  modelValue: { type: String },
+  modelValue: { type: [String, Number] },
   maxCharacters: { type: String },
   errorMessages: {
     type: String
