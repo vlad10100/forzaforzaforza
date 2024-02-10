@@ -14,6 +14,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@popperjs/core": "^2.11.8",
     "@types/vue": "^2.0.0",
     "@types/vuelidate": "^0.7.21",
     "@vuelidate/core": "^2.0.3",
@@ -25,6 +26,7 @@
     "firebase": "^10.8.0",
     "fuse.js": "^7.0.0",
     "pinia": "^2.1.7",
+    "v-calendar": "^3.1.2",
     "vue": "^3.4.18",
     "vue-router": "^4.2.5",
     "vuelidate": "^0.7.7"
