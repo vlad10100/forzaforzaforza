@@ -55,7 +55,7 @@
               class="flex items-center gap-2 text-xs cursor-pointer"
               v-for="gender in GENDER"
               :key="gender.value"
-              @click="selectedGender = gender.value"
+              @click="selectGender(gender.value)"
             >
               <CheckBox
                 size="extra_small"
@@ -108,7 +108,8 @@ import { required, minLength, maxLength, helpers, alpha } from '@vuelidate/valid
 import {
   useUsernameValidation,
   useDateValidation,
-  useValidationErrors
+  useValidationErrors,
+  transformDate
 } from '@/composables/vuelidate'
 
 import Page from './layout/Page.vue'
@@ -145,12 +146,16 @@ watchEffect(async () => {
       return
     }
     const data = await athleteStore.loadAthlete(commonStore.signedInUser.uid)
+    if (data?.birthday) {
+      data.birthday = transformDate(data.birthday)
+    }
     if (!data) {
       router.push('/')
       return
     }
 
     data.age = data.age === 0 ? null : data.age
+    selectedGender.value = data?.gender
     athlete.value = data
     commonStore.isLoading = false
   }
@@ -211,7 +216,6 @@ const birthdayError = computed((): { birthday: string } =>
 const saveChanges = async () => {
   v$.value.athlete.$touch()
   if (v$.value.athlete.$invalid) return
-  console.log(athlete.value.birthday, typeof athlete.value.birthday)
   const athleteDoc = doc(db, 'athletes', commonStore.signedInUser.uid)
 
   try {
@@ -231,6 +235,11 @@ const connectToStrava = () => {
 const handleDateDifference = (date: { years: number; months: number; days: number }) => {
   const parsedAge = `${date.years} years, ${date.months} mo.`
   athlete.value.age = parsedAge
+}
+
+const selectGender = (gender: string) => {
+  selectedGender.value = gender
+  athlete.value.gender = gender
 }
 </script>
 

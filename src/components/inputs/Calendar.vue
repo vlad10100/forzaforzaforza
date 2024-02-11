@@ -19,34 +19,24 @@
 
 <script setup lang="ts">
 import { ref, watch, defineProps, watchEffect } from 'vue'
-import type { PropType } from 'vue'
 import TextInput from './TextInput.vue'
 import { DatePicker } from 'v-calendar'
 import 'v-calendar/style.css'
 
 const emit = defineEmits(['update:modelValue', 'blur', 'get-difference'])
 
-type FirestoreTimestamp = { seconds: Number; nanoseconds: Number }
-
 const { label, errorMessages, getDifference, modelValue } = defineProps({
   label: { type: String },
   errorMessages: { type: String },
   getDifference: { type: Boolean, default: false },
-  modelValue: { type: Object as PropType<FirestoreTimestamp> }
+  modelValue: { type: Date }
 })
 
 const date = ref(new Date())
 
 watchEffect(() => {
-  if (!modelValue || !modelValue.seconds || !modelValue.nanoseconds) return
-  // Convert seconds and nanoseconds to numbers
-  const seconds = Number(modelValue.seconds)
-  const nanoseconds = Number(modelValue.nanoseconds)
-  // Check if conversion was successful
-  if (isNaN(seconds) || isNaN(nanoseconds)) return
-
-  const milliseconds = seconds * 1000 + nanoseconds / 1e6
-  date.value = new Date(milliseconds)
+  if (!modelValue) return
+  date.value = modelValue
 })
 
 const getDateDifference = (date1: Date, date2: Date) => {

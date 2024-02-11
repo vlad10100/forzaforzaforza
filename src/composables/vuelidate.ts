@@ -23,3 +23,18 @@ export const useDateValidation = (date: Date) => {
   return currentYear > year
 }
 
+type FirestoreTimestamp = { seconds: Number; nanoseconds: Number }
+export const transformDate = (date: FirestoreTimestamp) => {
+  if (!date || !date.seconds || !date.nanoseconds) return
+  // Convert seconds and nanoseconds to numbers
+  const seconds = Number(date.seconds)
+  const nanoseconds = Number(date.nanoseconds)
+  // Check if conversion was successful
+  if (isNaN(seconds) || isNaN(nanoseconds)) return
+
+  const milliseconds = seconds * 1000 + nanoseconds / 1e6
+  const newDate = new Date(milliseconds)
+
+  return newDate
+}
+
