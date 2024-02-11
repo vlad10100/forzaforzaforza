@@ -13,7 +13,7 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  base: "/forza/",
+  // base: "/forza/",
   server: {
     port: 2020
   }

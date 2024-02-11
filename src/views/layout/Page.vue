@@ -1,12 +1,15 @@
 <template>
   <div>
     <slot></slot>
-    <Footer />
+    <Footer v-if="!commonStore.isLoading" />
   </div>
 </template>
 
 <script setup lang="ts">
 import Footer from '@/components/common/Footer.vue'
+import { useCommonStore } from '@/stores/common'
+
+const commonStore = useCommonStore()
 
 // Scroll to top
 document.body.scrollTop = 0
