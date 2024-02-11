@@ -13,7 +13,7 @@
               >
                 <div class="h-full w-full rounded-lg overflow-hidden" :class="slide.value">
                   <div class="h-full w-full flex items-center justify-center">
-                    <img class="w-auto max-h-full" :src="`/logo/${slide.link}`" />
+                    <img class="w-auto max-h-full" :src="`/forza/logo/${slide.link}`" />
                   </div>
                 </div>
               </div>

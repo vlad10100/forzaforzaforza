@@ -1,9 +1,9 @@
 <template>
   <div
     @click="$emit('view-detail')"
-    class="md:w-60 h-full relative rounded-lg p-2 border border-gray-50 shadow-sm hover:border-gray-100 hover:shadow-md cursor-pointer duration-150 ease-in-out"
+    class="md:w-60 h-full relative rounded-lg p-2 border border-gray-50 shadow-sm hover:border-gray-100 hover:shadow-md cursor-pointer duration-150 ease-in-out mx-auto"
   >
-    <img class="w-fit h-60 mx-auto object-contain" :src="`/singlets/${source}`" />
+    <img class="w-fit h-60 mx-auto object-contain" :src="`/forza/singlets/${source}`" />
     <div class="w-full px-5 text-sm pb-8">
       <h4 class="">{{ label }}</h4>
     </div>
