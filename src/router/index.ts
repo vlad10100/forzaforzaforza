@@ -48,6 +48,11 @@ const router = createRouter({
       path: '/profile',
       component: () => import('@/views/Profile.vue')
     },
+    {
+      name: 'forza-strava-auth',
+      path: '/forza-strava-auth',
+      component: () => import('@/views/auth/ForzaStravaAuth.vue')
+    },
     { path: '/:pathMatch(.*)*', name: 'NotFound', component: () => import('@/views/NotFound.vue') }
   ]
 })
