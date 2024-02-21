@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
-  history: createWebHistory('/forza/'), //'/forza/'
+  history: createWebHistory('/beta/'),
   routes: [
     {
       name: 'home',
