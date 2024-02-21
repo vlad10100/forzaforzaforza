@@ -25,7 +25,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 RUN rm -rf /usr/share/nginx/html/*
 
 # Copy from the build stage
-COPY --from=builder /dist /usr/share/nginx/html/forza
+COPY --from=builder /dist /usr/share/nginx/html/beta
 
 # Informs Docker that the container listens on port 8080 at runtime
 EXPOSE 2020
