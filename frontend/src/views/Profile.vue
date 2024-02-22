@@ -145,7 +145,7 @@ watchEffect(async () => {
       commonStore.isLoading = false
       return
     }
-    const data = await athleteStore.loadAthlete(commonStore.signedInUser.uid)
+    const data = athleteStore.athlete
     if (data?.birthday) {
       data.birthday = transformDate(data.birthday)
     }
