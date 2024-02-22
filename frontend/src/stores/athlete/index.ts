@@ -4,11 +4,12 @@ import { db } from '../../firebase'
 import { ref } from 'vue'
 
 export const useAthleteStore = defineStore('athleteStore', () => {
-  const athlete = ref<Athlete>()
+  const athlete = ref()
   const loadAthlete = async (id: string) => {
     if (!id) return
     const athleteDoc = doc(db, 'athletes', id)
     const resp = await getDoc(athleteDoc)
+    athlete.value = resp.data()
     return resp.data()
   }
 
