@@ -24,32 +24,47 @@
                 </div>
               </RouterLink>
 
-              <div class="flex items-center gap-3 pl-5">
-                <button
-                  class="px-3 py-2 rounded-lg bg-yellow-400"
-                  v-if="!currentUser || !currentUser.connected_to_strava"
-                >
-                  <p class="text-sm font-medium">Connect Now!</p>
-                </button>
+              <div class="flex items-center gap-3">
+                <div v-if="signedInUser" class="flex items-center gap-4">
+                  <button
+                    @click="connectStrava"
+                    class="px-3 py-2 rounded-lg bg-yellow-400"
+                    v-if="!signedInUser.connected_to_strava"
+                  >
+                    <p class="text-sm font-medium">Connect Now!</p>
+                  </button>
+                  <Dropdown>
+                    <template #button>
+                      <IcUser size="30"></IcUser>
+                    </template>
+                    <template #dropdown-options>
+                      <!-- Active: "bg-gray-100", Not Active: "" -->
+                      <div class="w-40">
+                        <a
+                          v-for="option in userOptions"
+                          :key="option.value"
+                          @click="handleClick(option.value)"
+                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-slate-100"
+                          id="user-menu-item-0"
+                          >{{ option.label }}</a
+                        >
+                      </div>
+                    </template>
+                  </Dropdown>
+                </div>
+                <div v-else class="flex gap-3">
+                  <BaseButton
+                    @click="signIn"
+                    label="Sign In"
+                    class="bg-yellow-400 rounded-md px-2 py-1 text-sm"
+                  />
+                  <BaseButton
+                    @click="signIn"
+                    label="Sign Up"
+                    class="bg-white border border-black rounded-md px-2 py-1 text-sm"
+                  />
+                </div>
 
-                <Dropdown>
-                  <template #button>
-                    <IcUser size="30"></IcUser>
-                  </template>
-                  <template #dropdown-options>
-                    <!-- Active: "bg-gray-100", Not Active: "" -->
-                    <div class="w-40">
-                      <a
-                        v-for="option in userDropdownOptions"
-                        :key="option.value"
-                        @click="handleClick(option.value)"
-                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-slate-100"
-                        id="user-menu-item-0"
-                        >{{ option.label }}</a
-                      >
-                    </div>
-                  </template>
-                </Dropdown>
                 <IcShopCart class="cursor-pointer" :count="0" />
               </div>
             </div>
@@ -121,39 +136,55 @@
           </RouterLink>
         </div>
         <div class="border-t border-gray-200 pt-4">
-          <div
-            class="flex items-center px-4 py-2"
-            :class="currentUser ? 'justify-between' : 'justify-end'"
-          >
-            <div class="flex items-center" v-if="currentUser">
+          <div class="flex items-center px-4 py-2 justify-between">
+            <div class="flex items-center" v-if="signedInUser">
               <div class="flex-shrink-0">
                 <div>
                   <IcUser size="36" />
                 </div>
               </div>
               <div class="ml-3 my-2">
-                <div class="text-base font-medium text-gray-800">{{ currentUser.displayName }}</div>
-                <div class="text-sm font-medium text-gray-500">{{ currentUser.email }}</div>
+                <div class="text-base font-medium text-gray-800">
+                  {{ signedInAthlete.username || signedInUser.displayName }}
+                </div>
+                <div class="text-sm font-medium text-gray-500">{{ signedInUser.email }}</div>
               </div>
             </div>
             <div
-              @click="handleClick('connect-now')"
+              @click="connectStrava"
+              v-if="signedInUser && !signedInUser.connected_to_strava"
               class="text-base font-medium px-3 py-2 rounded-lg bg-yellow-400 cursor-pointer hidden sm:flex"
             >
               Connect Now
             </div>
+            <div class="flex items-center gap-5 px-5" v-if="!signedInUser">
+              <BaseButton
+                @click="signIn"
+                label="Sign In"
+                class="bg-yellow-400 rounded-md px-2 py-1 text-sm"
+              />
+              <BaseButton
+                @click="signIn"
+                label="Sign Up"
+                class="bg-white border border-black rounded-md px-2 py-1 text-sm"
+              />
+            </div>
             <IcShopCart class="cursor-pointer" />
           </div>
           <div
-            @click="handleClick('connect-now')"
-            class="text-base font-medium mx-10 px-3 py-2 rounded-lg bg-yellow-400 cursor-pointer sm:hidden"
+            v-if="signedInUser && !signedInUser.connected_to_strava"
+            class="sm:hidden w-full my-2 px-20"
           >
-            Connect Now
+            <BaseButton
+              @click="connectStrava"
+              label="Connect Now"
+              class="text-base font-medium mx-auto w-full px-2 py-1 rounded-lg bg-yellow-400"
+            />
           </div>
 
-          <div class="mt-3 space-y-1">
+          <div class="mt-3 space-y-1" v-if="signedInUser">
             <div
-              v-for="option in userDropdownOptions"
+              v-for="option in userOptions"
               :key="option.value"
               @click="handleClick(option.value)"
               class="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
@@ -174,7 +205,7 @@
 
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
-import { now, useWindowSize } from '@vueuse/core'
+import { useWindowSize } from '@vueuse/core'
 import { signInWithPopup, signOut } from 'firebase/auth'
 import { auth, provider, db } from '@/firebase'
 import { doc, setDoc } from 'firebase/firestore'
@@ -185,6 +216,7 @@ import { useCommonStore } from '@/stores/common'
 import IcUser from '@/components/icons/IcUser.vue'
 import IcShopCart from '@/components/icons/IcShopCart.vue'
 import Dropdown from '@/components/common/Dropdown.vue'
+import BaseButton from '@/components/buttons/BaseButton.vue'
 
 const { width } = useWindowSize()
 const router = useRouter()
@@ -226,10 +258,6 @@ const navLinks = [
 ]
 const userOptions = [
   {
-    label: 'Sign In',
-    value: '/sign-in'
-  },
-  {
     label: 'My Profile',
     value: '/profile'
   },
@@ -243,15 +271,12 @@ const userOptions = [
   }
 ]
 
-const currentUser = computed(() => {
+const signedInUser = computed(() => {
   return commonStore.signedInUser
 })
 
-const userDropdownOptions = computed(() => {
-  if (currentUser.value) {
-    return userOptions.filter((item) => item.value !== '/sign-in')
-  }
-  return userOptions.filter((item) => item.value === '/sign-in')
+const signedInAthlete = computed(() => {
+  return athleteStore.athlete
 })
 
 const signIn = async () => {
@@ -271,7 +296,7 @@ const signIn = async () => {
     const payload = {
       username: result.user.displayName?.replace(/\s+/g, '_') || null,
       connected_to_strava: false,
-      created_at: new Date(now()),
+      created_at: new Date(),
       first_name: '',
       last_name: '',
       age: 0,
@@ -305,6 +330,11 @@ const handleClick = (value: string) => {
   if (value === '/sign-in') signIn()
   if (value === '/log-out') logOut()
   if (value === '/profile') router.push(value)
+}
+
+const connectStrava = () => {
+  window.location.href =
+    'https://www.strava.com/oauth/authorize?client_id=116994&response_type=code&redirect_uri=http://forzaforzaforza.com/beta/forza-strava-auth&approval_prompt=force&scope=profile:read_all,activity:read_all'
 }
 </script>
 
