@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineProps, watchEffect } from 'vue'
+import { ref, watch, watchEffect } from 'vue'
 import TextInput from './TextInput.vue'
 import { DatePicker } from 'v-calendar'
 import 'v-calendar/style.css'
