@@ -7,14 +7,16 @@ import { onMounted, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAthleteStore } from '@/stores/athlete'
 import { useCommonStore } from '@/stores/common'
+import { useStravaStore } from '@/stores/strava'
 
 import { db } from '@/firebase'
-import { doc, updateDoc } from 'firebase/firestore'
+import { doc, updateDoc, collection, getDoc, setDoc } from 'firebase/firestore'
 
 const route = useRoute()
 const router = useRouter()
 const athleteStore = useAthleteStore()
 const commonStore = useCommonStore()
+const stravaStore = useStravaStore()
 
 const authenticate = async (code: string) => {
   const url = 'https://www.strava.com/api/v3/oauth/token'
@@ -53,6 +55,11 @@ watchEffect(async () => {
 
     const resfreshToken = await authenticate(code)
     const athleteDoc = doc(db, 'athletes', userId)
+    const stravaRef = collection(athleteDoc, 'strava')
+    const stravaDoc = doc(stravaRef, 'activities')
+    const activities = await getDoc(stravaDoc)
+    const data = activities.data()
+
     if (!code || !athlete || !resfreshToken) {
       router.push('/')
       return
@@ -61,15 +68,30 @@ watchEffect(async () => {
     athlete.connected_to_strava = true
     athlete.strava_refresh_token = resfreshToken
     await updateDoc(athleteDoc, athlete)
-    router.push('/')
+
+    const _2023 = 1640966400
+    const _2025 = 1735660800 // end of 2024
+    const _2024 = 1704038400 // start of 2023
+
+    if (!data || !data[2023] || !data[2024]) {
+      const stravaDoc = doc(stravaRef, 'activities')
+      const data2023 = await stravaStore.getAthleteActivities(
+        athlete.strava_refresh_token,
+        _2023,
+        _2024
+      )
+      const data2024 = await stravaStore.getAthleteActivities(
+        athlete.strava_refresh_token,
+        _2024,
+        _2025
+      )
+      await setDoc(stravaDoc, { 2023: data2023, 2024: data2024 })
+    }
+    router.push('/run')
   }
 })
 onMounted(() => {
   commonStore.isLoading = true
-  setTimeout(() => {
-    if (commonStore.isFetchingUser) return
-    commonStore.isLoading = false
-  }, 1000)
 })
 </script>
 
