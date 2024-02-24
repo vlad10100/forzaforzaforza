@@ -25,6 +25,7 @@
       </div>
       <!-- TEXT INPUT -->
       <input
+        :readonly="readOnly"
         class="w-full py-2 px-3 text-sm rounded-md"
         :type="typeof modelValue !== 'number' ? 'text' : 'number'"
         :placeholder="placeholder"
@@ -59,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { readonly, ref, watch } from 'vue'
 /**
  * EMITS
  */
@@ -90,7 +91,8 @@ const props = defineProps({
   maxCharacters: { type: String },
   errorMessages: {
     type: String
-  }
+  },
+  readOnly: { type: Boolean, default: false }
 })
 
 /**

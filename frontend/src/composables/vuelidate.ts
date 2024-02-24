@@ -14,11 +14,11 @@ export const useValidationErrors = <T extends Record<keyof T, string>>(
 export const useUsernameValidation = (value: string) => {
   const pattern = /^[a-zA-Z0-9_]+$/
   return pattern.test(value)
-} 
+}
 
 export const useDateValidation = (date: Date) => {
   const currentDate = new Date()
-  const currentYear = currentDate.getFullYear() 
+  const currentYear = currentDate.getFullYear()
   const year = date.getFullYear()
   return currentYear > year
 }
@@ -37,4 +37,3 @@ export const transformDate = (date: FirestoreTimestamp) => {
 
   return newDate
 }
-

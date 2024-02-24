@@ -1,6 +1,6 @@
 <template>
   <div>
-    <DatePicker v-model="date" color="gray">
+    <DatePicker v-model="date" color="gray" @blur="$emit('blur')">
       <template v-slot="{ inputValue, inputEvents }">
         <div class="space-y-2">
           <TextInput
@@ -8,7 +8,6 @@
             :label="label"
             v-on="inputEvents"
             :model-value="inputValue"
-            @blur="$emit('blur')"
             :error-messages="errorMessages"
           />
         </div>
