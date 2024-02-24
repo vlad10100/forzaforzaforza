@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import Carousel from '@/components/Carousel.vue'
+import Carousel from '@/components/common/Carousel.vue'
 import ItemCard from '@/components/shop/ItemCard.vue'
 import Page from './layout/Page.vue'
 import router from '@/router'

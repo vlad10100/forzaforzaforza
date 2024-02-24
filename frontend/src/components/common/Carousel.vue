@@ -55,7 +55,7 @@ import type { AutoplayType } from 'embla-carousel-autoplay'
 
 import emblaCarouselVue from 'embla-carousel-vue'
 import Autoplay from 'embla-carousel-autoplay'
-import ChevronIcon from './icons/IcChevron.vue'
+import ChevronIcon from '@/components/icons/IcChevron.vue'
 
 type slideType = {
   label: string
