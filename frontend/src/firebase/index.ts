@@ -8,7 +8,7 @@ import { getFirestore } from 'firebase/firestore'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyDuAdF7JIjSCQvJFVhu4KpbaRO2fp-BORE',
-  authDomain: 'auth.forzaforzaforza.com',
+  authDomain: 'forzaforzaforza-3fb61.firebaseapp.com',
   projectId: 'forzaforzaforza-3fb61',
   storageBucket: 'forzaforzaforza-3fb61.appspot.com',
   messagingSenderId: '144609460325',
