@@ -64,6 +64,9 @@ type Activity = {
   total_photo_count: number
   has_kudoed: boolean
   svg_path: string
+  parsed_date: string
+  parsed_moving_time: string
+  average_pace: string
 }
 
 export const useStravaStore = defineStore('stravaStore', () => {
@@ -121,6 +124,35 @@ export const useStravaStore = defineStore('stravaStore', () => {
     return generatedPath
   }
 
+  const parseDate = (date: string) => {
+    const timestamp = new Date(date)
+    const parsedDate = timestamp.toLocaleDateString(undefined, {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
+    return parsedDate
+  }
+
+  const parseMovingTime = (seconds: number) => {
+    const hours = Math.floor(seconds / 3600)
+    const minutes = Math.floor((seconds % 3600) / 60)
+    const remainingSeconds = seconds % 60
+
+    return hours + ' hrs ' + minutes + ' mins ' + remainingSeconds + ' secs'
+  }
+
+  const parseAveragePace = (pace: number) => {
+    const speedKmPerMin = pace * (60 / 1000)
+    const minPerKm = 1 / speedKmPerMin
+
+    const minutes = Math.floor(minPerKm)
+    const seconds = Math.round((minPerKm - minutes) * 60)
+
+    return minutes + ':' + (seconds < 10 ? '0' : '') + seconds + ' min/km'
+  }
+
   const getAthleteActivities = async (refreshToken: string, after: Number, before: Number) => {
     const authTokens = await auth(refreshToken)
     const access_token = authTokens.access_token
@@ -140,7 +172,13 @@ export const useStravaStore = defineStore('stravaStore', () => {
     const data = await response.json()
     const activitiesWithPolylineSvg = data.map((activity: Activity) => {
       const svg_path = createSvgCode(activity.map.summary_polyline)
+      const parsedDate = parseDate(activity.start_date_local)
+      const movingTime = parseMovingTime(activity.moving_time)
+      const averagePace = parseAveragePace(activity.average_speed)
       activity.svg_path = svg_path || ''
+      activity.parsed_date = parsedDate || ''
+      activity.parsed_moving_time = movingTime || ''
+      activity.average_pace = averagePace || ''
       return activity
     })
     return activitiesWithPolylineSvg
