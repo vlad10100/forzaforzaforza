@@ -29,9 +29,9 @@
         </div>
         <div class="h-8 w-full bg-slate-50 rounded-md flex gap-5 items-center flex-nowrap">
           <div>
-            <div class="h-8 w-8 bg-black rounded-md cursor-pointer"></div>
+            <IcUser :size="30" />
           </div>
-          <p class="flex-grow-0 flex-shrink-0">USER</p>
+          <p class="flex-grow-0 flex-shrink-0">{{ userData.username }}</p>
         </div>
       </div>
 
@@ -72,11 +72,13 @@
 import IcChevron from '@/components/icons/IcChevron.vue'
 import IcSquares from '@/components/icons/IcSquares.vue'
 import SideBarLinks from '@/components/sidebar/SideBarLinks.vue'
+import IcUser from '../icons/IcUser.vue'
 import { ref, onMounted } from 'vue'
 
 const NAV_LINK_KEY = 'NAV_LINK_KEY'
 const selectedNavLink = ref('')
 type NavLink = { label: string; value: string }
+type UserData = { username: string }
 
 defineProps({
   isSideBarOpen: {
@@ -89,6 +91,10 @@ defineProps({
   },
   settings: {
     type: Array as () => NavLink[],
+    required: true
+  },
+  userData: {
+    type: Object as () => UserData,
     required: true
   }
 })
