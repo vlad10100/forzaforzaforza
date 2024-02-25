@@ -8,7 +8,7 @@
             <!-- LOGO -->
             <div class="flex flex-shrink-0 items-center">
               <RouterLink to="/"
-                ><img class="h-6 w-auto" src="/logo/forza_logo.svg" alt="VLAD"
+                ><img class="h-6 w-auto" src="/logo/forza_logo_ph.svg" alt="VLAD"
               /></RouterLink>
             </div>
             <!-- NAV LINKS -->
