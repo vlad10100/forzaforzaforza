@@ -20,7 +20,7 @@ import type { PropType } from 'vue'
 const emit = defineEmits(['click'])
 
 const { size } = defineProps({
-  size: { type: String || Number, default: '24' },
+  size: { type: [String, Number], default: '24' },
   direction: { type: String as PropType<'right' | 'left' | 'up' | 'down'>, default: 'down' }
 })
 
