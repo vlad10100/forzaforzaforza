@@ -21,10 +21,7 @@
     <!-- MAIN CONTENT -->
     <div class="flex w-full overflow-y-auto scrollbar max-h-[calc(100vh-64px)]">
       <div class="m-10 lg:mx-20 mx-5 w-full ml-20 md:ml-5">
-        <div
-          class="text-center"
-          v-if="athleteStore.athlete && athleteStore.athlete.connected_to_strava"
-        >
+        <div v-if="athleteStore.athlete && athleteStore.athlete.connected_to_strava">
           <AllActivities
             :is-loading="commonStore.isLoading"
             :activities="[...activities2024, ...activities2023]"
@@ -65,10 +62,13 @@ type Activity = {
   id: Number
   name: String
   sport_type: String
-  start_date_local: Date
+  parsed_date: String
   max_heartrate: Number
   svg_path: string
   distance: number
+  average_heartrate: Number
+  average_pace: string
+  parsed_moving_time: string
 }
 
 watchEffect(async () => {
