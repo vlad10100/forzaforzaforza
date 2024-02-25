@@ -1,6 +1,6 @@
 <template>
   <div class="md:h-60 w-full bg-gray-100 relative">
-    <div class="md:-rotate-90 md:absolute md:-left-10 md:bottom-18 p-10">
+    <div class="md:-rotate-90 md:absolute md:bottom-18 md:top-28">
       <img class="w-44 h-auto" src="/logo/forza_logo.svg" />
     </div>
     <div class="md:flex md:justify-evenly md:space-y-0 md:pt-16 md:pb-0 p-10 space-y-10 pb-40">
