@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useCommonStore } from '@/stores/common'
+import { getSignedInUser } from '@/composables'
 
 const router = createRouter({
   history: createWebHistory('/beta/'),
@@ -61,12 +62,12 @@ const router = createRouter({
 })
 
 // Auth guard
-router.beforeEach((to, from, next) => {
-  const commonStore = useCommonStore()
-  const isAuthenticated = commonStore.signedInUser
+router.beforeEach(async (to, from, next) => {
+  const user = await getSignedInUser()
 
   if (to.matched.some((record) => record.meta.requiresAuth)) {
-    if (!isAuthenticated) {
+    if (!user) {
+      console.log('UNAUTH')
       next({
         path: '/'
       })
