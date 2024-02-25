@@ -2,10 +2,12 @@
   <div class="md:flex w-full">
     <div class="fixed z-50 md:relative md:z-0">
       <SideBar
+        v-if="athleteStore.athlete"
         @toggle="toggleSideBar"
         :is-side-bar-open="isSideBarOpen"
         :nav-links="NAVLINKS"
         :settings="SETTINGS"
+        :user-data="athleteStore.athlete"
       ></SideBar>
     </div>
 
@@ -16,6 +18,7 @@
       v-if="smallScreen && isSideBarOpen"
     />
 
+    <!-- MAIN CONTENT -->
     <div class="flex w-full overflow-y-auto scrollbar max-h-[calc(100vh-64px)]">
       <div class="m-10 lg:mx-20 mx-5 w-full ml-20 md:ml-5">
         <div
@@ -36,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, watchEffect, watch, ref } from 'vue'
+import { onMounted, watchEffect, watch, ref, computed } from 'vue'
 import { useWindowSize } from '@vueuse/core'
 
 import { useCommonStore } from '@/stores/common'
