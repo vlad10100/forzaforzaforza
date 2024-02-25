@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useCommonStore } from '@/stores/common'
 
 const router = createRouter({
   history: createWebHistory('/beta/'),
@@ -11,7 +12,8 @@ const router = createRouter({
     {
       name: 'run',
       path: '/run',
-      component: () => import('@/views/Run.vue')
+      component: () => import('@/views/app/Run.vue'),
+      meta: { requiresAuth: true }
     },
     {
       name: 'calendar',
@@ -46,7 +48,8 @@ const router = createRouter({
     {
       name: 'profile',
       path: '/profile',
-      component: () => import('@/views/Profile.vue')
+      component: () => import('@/views/Profile.vue'),
+      meta: { requiresAuth: true }
     },
     {
       name: 'forza-strava-auth',
@@ -55,6 +58,24 @@ const router = createRouter({
     },
     { path: '/:pathMatch(.*)*', name: 'NotFound', component: () => import('@/views/NotFound.vue') }
   ]
+})
+
+// Auth guard
+router.beforeEach((to, from, next) => {
+  const commonStore = useCommonStore()
+  const isAuthenticated = commonStore.signedInUser
+
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    if (!isAuthenticated) {
+      next({
+        path: '/'
+      })
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
 })
 
 export default router
