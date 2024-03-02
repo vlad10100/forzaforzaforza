@@ -23,8 +23,15 @@
       <div class="m-10 lg:mx-20 mx-5 w-full ml-20 md:ml-5">
         <div v-if="athleteStore.athlete && athleteStore.athlete.connected_to_strava">
           <AllActivities
+            v-if="!selectedActivity"
             :is-loading="commonStore.isLoading"
-            :activities="[...activities2024, ...activities2023]"
+            :activities="allActivities"
+            @view-activity="viewActivity"
+          />
+          <ActivityDetails
+            v-if="selectedActivity && activityData"
+            :activity-data="activityData"
+            @back="(selectedActivity = 0), (activityData = null)"
           />
         </div>
         <div v-else>
@@ -41,35 +48,50 @@ import { useWindowSize } from '@vueuse/core'
 
 import { useCommonStore } from '@/stores/common'
 import { useAthleteStore } from '@/stores/athlete'
+import { useStravaStore } from '@/stores/strava'
+import {
+  parseAveragePace,
+  createSvgCode,
+  parseMovingTime,
+  parseDate
+} from '@/stores/strava/parsers'
+import type { Activity } from '@/stores/strava/parsers'
+
 import { db } from '@/firebase'
 import { collection, doc, setDoc, getDoc } from 'firebase/firestore'
 
 import SideBar from '@/components/sidebar/SideBar.vue'
 import AllActivities from '@/views/app/AllActivities.vue'
 import ConnectNow from '@/views/app/ConnectNow.vue'
+import ActivityDetails from './ActivityDetails.vue'
 
 const { width } = useWindowSize()
 const isSideBarOpen = ref(false)
 const smallScreen = ref(false)
+const selectedActivity = ref(0)
+const activityData = ref()
 
 const commonStore = useCommonStore()
 const athleteStore = useAthleteStore()
+const stravaStore = useStravaStore()
 
 const activities2023 = ref<Activity[]>([])
 const activities2024 = ref<Activity[]>([])
 
-type Activity = {
-  id: Number
-  name: String
-  sport_type: String
-  parsed_date: String
-  max_heartrate: Number
-  svg_path: string
-  distance: number
-  average_heartrate: Number
-  average_pace: string
-  parsed_moving_time: string
-}
+const allActivities = computed(() => {
+  const activities = [...activities2024.value, ...activities2023.value].filter(
+    (activity: Activity) => {
+      if (activity.sport_type === 'Run') {
+        activity.date = parseDate(activity.start_date_local)
+        activity.parsed_moving_time = parseMovingTime(activity.moving_time)
+        activity.parsed_average_pace = parseAveragePace(activity.average_speed)
+        activity.svg_path = createSvgCode(activity.map.summary_polyline, 200)
+        return activity
+      }
+    }
+  )
+  return activities
+})
 
 watchEffect(async () => {
   if (!commonStore.isFetchingUser) {
@@ -96,6 +118,7 @@ watchEffect(async () => {
       activities2024.value = data[2024]
       activities2023.value = data[2023]
     }
+    console.log('done')
     commonStore.isLoading = false
     return
   }
@@ -115,14 +138,43 @@ onMounted(() => {
   if (width.value < 768) {
     smallScreen.value = true
   } else smallScreen.value = false
+
   setTimeout(() => {
     if (commonStore.isFetchingUser) return
-    commonStore.isLoading = false
   }, 1000)
 })
 
 const toggleSideBar = () => {
   isSideBarOpen.value = !isSideBarOpen.value
+}
+
+const viewActivity = async (id: number) => {
+  commonStore.isLoading = true
+  selectedActivity.value = id
+  const activity = allActivities.value.find((activity) => activity.id === id)
+  const activityDetails = await stravaStore.getActivityById(
+    id,
+    athleteStore.athlete.strava_refresh_token
+  )
+  if (activity && activityDetails) {
+    console.log(activityDetails)
+    const parsedActivityData = {
+      id: activity.id,
+      name: activity.name,
+      average_pace: activity.parsed_average_pace,
+      average_heartrate: activity.average_heartrate,
+      date: activity.date,
+      parsed_moving_time: activity.parsed_moving_time,
+      splits_metric: activityDetails.splits_metric,
+      gear: activityDetails.gear,
+      device_name: activityDetails.device_name,
+      workout_type: activityDetails.workout_type,
+      svg_path: activity.svg_path,
+      laps_metric: activityDetails.laps
+    }
+    activityData.value = parsedActivityData
+  }
+  commonStore.isLoading = false
 }
 
 const NAVLINKS = [
