@@ -53,6 +53,16 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
+      name: 'test',
+      path: '/test',
+      component: () => import('@/views/Test.vue')
+    },
+    {
+      name: 'vertical',
+      path: '/vertical',
+      component: () => import('@/views/Vertical.vue')
+    },
+    {
       name: 'forza-strava-auth',
       path: '/forza-strava-auth',
       component: () => import('@/views/auth/ForzaStravaAuth.vue')
