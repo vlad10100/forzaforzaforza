@@ -10,6 +10,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import NavBar from '@/components/common/Navbar.vue'
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
+onMounted(() => {
+  userStore.getUser()
+})
 </script>
 
 <style scoped>

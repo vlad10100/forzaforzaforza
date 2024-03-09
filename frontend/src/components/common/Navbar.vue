@@ -8,7 +8,10 @@
             <!-- LOGO -->
             <div class="flex flex-shrink-0 items-center">
               <RouterLink to="/"
-                ><img class="h-6 w-auto" src="/logo/forza_logo_ph.svg" alt="VLAD"
+                ><img
+                  class="h-6 w-auto"
+                  src="/logo/forza_logo_ph.svg"
+                  alt="VLAD"
               /></RouterLink>
             </div>
             <!-- NAV LINKS -->
@@ -19,13 +22,19 @@
                 :key="index"
                 v-slot="{ isActive }"
                 :to="link.value"
-                ><div class="h-16 capitalize" :class="isActive ? 'active-class' : 'inactive-class'">
+                ><div
+                  class="h-16 capitalize"
+                  :class="isActive ? 'active-class' : 'inactive-class'"
+                >
                   {{ link.label }}
                 </div>
               </RouterLink>
 
               <div class="flex items-center gap-3">
-                <div v-if="signedInUser" class="flex items-center gap-4">
+                <div
+                  v-if="signedInUser"
+                  class="flex items-center gap-4"
+                >
                   <button
                     @click="connectStrava"
                     class="px-3 py-2 rounded-lg bg-yellow-400"
@@ -52,7 +61,10 @@
                     </template>
                   </Dropdown>
                 </div>
-                <div v-else class="flex gap-3">
+                <div
+                  v-else
+                  class="flex gap-3"
+                >
                   <BaseButton
                     @click="signIn"
                     label="Sign In"
@@ -65,7 +77,10 @@
                   />
                 </div>
 
-                <IcShopCart class="cursor-pointer" :count="0" />
+                <IcShopCart
+                  class="cursor-pointer"
+                  :count="0"
+                />
               </div>
             </div>
           </div>
@@ -81,7 +96,7 @@
             >
               <span class="absolute -inset-0.5"></span>
               <span class="sr-only">Open main menu</span>
-              <!-- 
+              <!--
                   Icon when menu is closed.
                   Menu open: "hidden", Menu closed: "block"
                 -->
@@ -99,7 +114,7 @@
                   d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
                 />
               </svg>
-              <!-- 
+              <!--
                   Icon when menu is open.
                   Menu open: "block", Menu closed: "hidden"
                 -->
@@ -111,7 +126,11 @@
                 stroke="currentColor"
                 aria-hidden="true"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -119,7 +138,11 @@
       </div>
 
       <!-- MOBILE -->
-      <div class="lg:hidden" id="mobile-menu" v-if="isDropdownMenuVisible">
+      <div
+        class="lg:hidden"
+        id="mobile-menu"
+        v-if="isDropdownMenuVisible"
+      >
         <div class="space-y-1 pb-3 pt-2">
           <RouterLink
             v-for="(link, index) in navLinks"
@@ -137,7 +160,10 @@
         </div>
         <div class="border-t border-gray-200 pt-4">
           <div class="flex items-center px-4 py-2 justify-between">
-            <div class="flex items-center" v-if="signedInUser">
+            <div
+              class="flex items-center"
+              v-if="signedInUser"
+            >
               <div class="flex-shrink-0">
                 <div>
                   <IcUser size="36" />
@@ -145,7 +171,7 @@
               </div>
               <div class="ml-3 my-2">
                 <div class="text-base font-medium text-gray-800">
-                  {{ signedInAthlete.username || signedInUser.displayName }}
+                  {{ signedInUser.username }}
                 </div>
                 <div class="text-sm font-medium text-gray-500">{{ signedInUser.email }}</div>
               </div>
@@ -157,7 +183,10 @@
             >
               Connect Now
             </div>
-            <div class="flex items-center gap-5 px-5" v-if="!signedInUser">
+            <div
+              class="flex items-center gap-5 px-5"
+              v-if="!signedInUser"
+            >
               <BaseButton
                 @click="signIn"
                 label="Sign In"
@@ -182,7 +211,10 @@
             />
           </div>
 
-          <div class="mt-3 space-y-1" v-if="signedInUser">
+          <div
+            class="mt-3 space-y-1"
+            v-if="signedInUser"
+          >
             <div
               v-for="option in userOptions"
               :key="option.value"
@@ -204,14 +236,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { ref, watch, watchEffect, computed, inject, onMounted } from 'vue'
 import { useWindowSize } from '@vueuse/core'
-import { signInWithPopup, signOut } from 'firebase/auth'
-import { auth, provider, db } from '@/firebase'
-import { doc, setDoc } from 'firebase/firestore'
 import { useRouter } from 'vue-router'
-import { useAthleteStore } from '@/stores/athlete'
-import { useCommonStore } from '@/stores/common'
+import { useUserStore } from '@/stores/user'
 
 import IcUser from '@/components/icons/IcUser.vue'
 import IcShopCart from '@/components/icons/IcShopCart.vue'
@@ -219,117 +247,103 @@ import Dropdown from '@/components/common/Dropdown.vue'
 import BaseButton from '@/components/buttons/BaseButton.vue'
 
 const { width } = useWindowSize()
+
+// axios
+import type { Axios } from 'axios'
+const axios = inject('axios') as Axios
+
 const router = useRouter()
-const athleteStore = useAthleteStore()
-const commonStore = useCommonStore()
+const userStore = useUserStore()
+
+const emit = defineEmits(['logout'])
+
+const user = ref()
+
+watch(
+  () => userStore.user,
+  newValue => {
+    user.value = newValue
+  },
+)
 
 watch(
   () => width.value,
-  (newValue) => {
+  newValue => {
     if (newValue < 1024) {
       isDropdownMenuVisible.value = false
     }
-  }
+  },
 )
 
-const isDropdownMenuVisible = ref<boolean>(false)
+const isDropdownMenuVisible = ref(false)
 
 const navLinks = [
   {
     label: 'Home',
-    value: '/'
+    value: '/',
   },
   {
     label: 'run',
-    value: '/run'
+    value: '/run',
   },
   {
     label: 'sale!',
-    value: '/sale'
+    value: '/sale',
   },
   {
     label: 'calendar',
-    value: '/calendar'
+    value: '/calendar',
   },
   {
     label: 'about us',
-    value: '/about-us'
-  }
+    value: '/about-us',
+  },
 ]
 const userOptions = [
   {
     label: 'My Profile',
-    value: '/profile'
+    value: '/profile',
   },
   {
     label: 'Settings',
-    value: '/settings'
+    value: '/settings',
   },
   {
     label: 'Log out',
-    value: '/log-out'
-  }
+    value: '/log-out',
+  },
 ]
 
 const signedInUser = computed(() => {
-  return commonStore.signedInUser
+  if (!user.value) return null
+  user.value.connected_to_strava = false
+  return user.value
 })
-
-const signedInAthlete = computed(() => {
-  return athleteStore.athlete
-})
-
-const signIn = async () => {
-  try {
-    const result = await signInWithPopup(auth, provider)
-    commonStore.isLoading = true
-    commonStore.signedInUser = result.user
-
-    const athlete = await athleteStore.loadAthlete(result.user.uid)
-    commonStore.signedInUser['connected_to_strava'] = athlete?.connected_to_strava || false
-    if (athlete?.first_name && athlete?.last_name) {
-      router.push('/run')
-      return
-    }
-
-    // Create new athlete
-    const payload = {
-      username: result.user.displayName?.replace(/\s+/g, '_') || null,
-      connected_to_strava: false,
-      created_at: new Date(),
-      first_name: '',
-      last_name: '',
-      age: 0,
-      gender: '',
-      height: 0,
-      weight: 0,
-      birthday: null,
-      strava_refresh_token: ''
-    }
-    const athleteDoc = doc(db, 'athletes', result.user.uid)
-    await setDoc(athleteDoc, payload)
-    router.push('/profile')
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-const logOut = async () => {
-  try {
-    await signOut(auth)
-    commonStore.signedInUser = null
-  } catch (error) {
-    console.log(error)
-  } finally {
-    router.push('/')
-  }
-}
 
 const handleClick = (value: string) => {
   isDropdownMenuVisible.value = false
   if (value === '/sign-in') signIn()
   if (value === '/log-out') logOut()
   if (value === '/profile') router.push(value)
+}
+
+const signIn = async () => {
+  router.push('/auth')
+  isDropdownMenuVisible.value = false
+}
+
+const logOut = async () => {
+  try {
+    const resp = await axios.post('/auth/logout')
+    if (resp.status === 200) {
+      userStore.removeUser()
+    }
+  } catch (error) {
+    console.error(error)
+  } finally {
+    user.value = userStore.getUser()
+    router.push('/')
+  }
 }
 
 const connectStrava = () => {

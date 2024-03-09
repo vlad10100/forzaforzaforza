@@ -1,3 +1,4 @@
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 export const USER_KEY = 'forza_user'
@@ -9,22 +10,27 @@ export type User = {
 }
 
 export const useUserStore = defineStore('userStore', () => {
+  const user = ref<User | null>(null)
+
   const loadUser = (username: string, email: string, user_id: string) => {
-    const user: User = { username, email, user_id }
-    localStorage.setItem(USER_KEY, JSON.stringify(user))
+    const userObject: User = { username, email, user_id }
+    user.value = userObject
+    localStorage.setItem(USER_KEY, JSON.stringify(userObject))
   }
 
   const getUser = () => {
-    const user = localStorage.getItem(USER_KEY)
-    if (user) {
-      return JSON.parse(user)
+    const savedUser = localStorage.getItem(USER_KEY)
+    if (savedUser) {
+      user.value = JSON.parse(savedUser)
+      return user.value
     }
     return null
   }
 
   const removeUser = () => {
     localStorage.removeItem(USER_KEY)
+    user.value = null
   }
 
-  return { loadUser, getUser, removeUser }
+  return { loadUser, getUser, removeUser, user }
 })
