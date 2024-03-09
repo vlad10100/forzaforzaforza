@@ -1,7 +1,10 @@
 <template>
   <div class="md:h-60 w-full bg-gray-100 relative">
     <div class="md:-rotate-90 md:absolute md:bottom-18 md:top-28">
-      <img class="w-44 h-auto" src="/logo/forza_logo.svg" />
+      <img
+        class="w-44 md:pt-0 mx-4 pt-10 h-auto"
+        src="/logo/forza_logo.svg"
+      />
     </div>
     <div class="md:flex md:justify-evenly md:space-y-0 md:pt-16 md:pb-0 p-10 space-y-10 pb-40">
       <div>
@@ -29,8 +32,8 @@
 </template>
 
 <script setup lang="ts">
-import IcFacebook from '../icons/socialmedia/IcFacebook.vue'
-import IcInstagram from '../icons/socialmedia/IcInstagram.vue'
+import IcFacebook from '@/components/icons/socialmedia/IcFacebook.vue'
+import IcInstagram from '@/components/icons/socialmedia/IcInstagram.vue'
 </script>
 
 <style scoped></style>
