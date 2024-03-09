@@ -1,10 +1,11 @@
 <template>
   <Page>
-    <div class="md:flex md:flex-row md:gap-10 w-full my-20 mb-60 justify-center" v-if="athlete">
+    <div
+      class="md:flex md:flex-row md:gap-10 w-full my-20 mb-60 justify-center"
+      v-if="athlete"
+    >
       <div>
-        <div class="h-60 w-48 mx-auto md:mx-0 border border-gray-100 shadow-lg rounded-es-lg">
-          USER
-        </div>
+        <div class="h-60 w-48 mx-auto md:mx-0 border border-gray-100 shadow-lg rounded-es-lg">USER</div>
         <p
           v-if="!athlete.connected_to_strava"
           class="text-black text-center py-4 hover:font-medium hover:text-yellow-500 cursor-pointer duration-300 ease-in-out"
@@ -68,12 +69,22 @@
           </div>
         </div>
         <div class="flex items-center gap-3">
-          <TextInput label="Height" suffix="cm" dividerRight v-model="athlete.height">
+          <TextInput
+            label="Height"
+            suffix="cm"
+            dividerRight
+            v-model="athlete.height"
+          >
             <template #suffix="{ suffix }">
               <p class="mx-5">{{ suffix }}</p>
             </template>
           </TextInput>
-          <TextInput label="Weight" suffix="kg" dividerRight v-model="athlete.weight">
+          <TextInput
+            label="Weight"
+            suffix="kg"
+            dividerRight
+            v-model="athlete.weight"
+          >
             <template #suffix="{ suffix }">
               <p class="mx-5">{{ suffix }}</p>
             </template>
@@ -94,23 +105,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watchEffect } from 'vue'
+import { computed, onMounted, ref, watchEffect, inject } from 'vue'
 import { useRouter } from 'vue-router'
 
-import { db } from '@/firebase'
-import { doc, updateDoc } from 'firebase/firestore'
-
-import { useAthleteStore } from '@/stores/athlete'
 import { useCommonStore } from '@/stores/common'
+import { useUserStore } from '@/stores/user'
 
 import { useVuelidate } from '@vuelidate/core'
 import { required, minLength, maxLength, helpers, alpha } from '@vuelidate/validators'
-import {
-  useUsernameValidation,
-  useDateValidation,
-  useValidationErrors,
-  transformDate
-} from '@/composables/vuelidate'
+import { useUsernameValidation, useDateValidation, useValidationErrors, transformDate } from '@/composables/vuelidate'
+
+// axios
+import type { Axios } from 'axios'
+const axios = inject('axios') as Axios
 
 import Page from './layout/Page.vue'
 import TextInput from '@/components/inputs/TextInput.vue'
@@ -120,45 +127,28 @@ import Calendar from '@/components/inputs/Calendar.vue'
 const GENDER = [
   { label: 'male', value: 'male' },
   { label: 'female', value: 'female' },
-  { label: 'Non binary', value: 'non-binary' }
+  { label: 'Non binary', value: 'non-binary' },
 ]
 
-const athleteStore = useAthleteStore()
 const commonStore = useCommonStore()
+const userStore = useUserStore()
 const router = useRouter()
 
 const athlete = ref()
 const selectedGender = ref('')
 
-onMounted(() => {
-  commonStore.isLoading = true
+onMounted(async () => {
+  commonStore.loadingWholePage = true
+  const { data } = await axios.get('/user')
+
+  data.age = data.age === 0 ? null : data.age
+  selectedGender.value = data?.gender
+  athlete.value = data
+  if (data.birthday) athlete.value.birthday = new Date(data.birthday)
+
   setTimeout(() => {
-    if (commonStore.isFetchingUser) return
-    commonStore.isLoading = false
+    commonStore.loadingWholePage = false
   }, 1000)
-})
-
-watchEffect(async () => {
-  if (!commonStore.isFetchingUser) {
-    commonStore.isLoading = true
-    if (!commonStore.signedInUser) {
-      commonStore.isLoading = false
-      return
-    }
-    const data = await athleteStore.loadAthlete(commonStore.signedInUser.uid)
-    if (data?.birthday) {
-      data.birthday = transformDate(data.birthday)
-    }
-    if (!data) {
-      router.push('/')
-      return
-    }
-
-    data.age = data.age === 0 ? null : data.age
-    selectedGender.value = data?.gender
-    athlete.value = data
-    commonStore.isLoading = false
-  }
 })
 
 const rules = computed(() => {
@@ -166,32 +156,23 @@ const rules = computed(() => {
     athlete: {
       username: {
         required: helpers.withMessage('This field is required.', required),
-        useUsernameValidation: helpers.withMessage(
-          'Username contains invalid character.',
-          useUsernameValidation
-        ),
-        minLength: helpers.withMessage(
-          'This username must have at least 6 characters.',
-          minLength(6)
-        ),
-        maxLength: helpers.withMessage(
-          'This username has a maximum of 16 characters.',
-          maxLength(16)
-        )
+        useUsernameValidation: helpers.withMessage('Username contains invalid character.', useUsernameValidation),
+        minLength: helpers.withMessage('This username must have at least 6 characters.', minLength(6)),
+        maxLength: helpers.withMessage('This username has a maximum of 16 characters.', maxLength(16)),
       },
       first_name: {
         required: helpers.withMessage('This field is required.', required),
-        alpha: helpers.withMessage('This field can contain only letters.', alpha)
+        alpha: helpers.withMessage('This field can contain only letters.', alpha),
       },
       last_name: {
         required: helpers.withMessage('This field is required.', required),
-        alpha: helpers.withMessage('This field can contain only letters.', alpha)
+        alpha: helpers.withMessage('This field can contain only letters.', alpha),
       },
       birthday: {
         required: helpers.withMessage('This field is required.', required),
-        useDateValidation: helpers.withMessage('Please input a valid date.', useDateValidation)
-      }
-    }
+        useDateValidation: helpers.withMessage('Please input a valid date.', useDateValidation),
+      },
+    },
   }
 })
 const v$ = useVuelidate(rules, { athlete })
@@ -200,31 +181,23 @@ const blur = (field: string) => {
   v$.value.athlete[field].$touch()
 }
 
-const usernameError = computed((): { username: string } =>
-  useValidationErrors(v$.value.athlete.username.$errors)
-)
-const firstNameError = computed((): { first_name: string } =>
-  useValidationErrors(v$.value.athlete.first_name.$errors)
-)
-const lastNameError = computed((): { last_name: string } =>
-  useValidationErrors(v$.value.athlete.last_name.$errors)
-)
-const birthdayError = computed((): { birthday: string } =>
-  useValidationErrors(v$.value.athlete.birthday.$errors)
-)
+const usernameError = computed((): { username: string } => useValidationErrors(v$.value.athlete.username.$errors))
+const firstNameError = computed((): { first_name: string } => useValidationErrors(v$.value.athlete.first_name.$errors))
+const lastNameError = computed((): { last_name: string } => useValidationErrors(v$.value.athlete.last_name.$errors))
+const birthdayError = computed((): { birthday: string } => useValidationErrors(v$.value.athlete.birthday.$errors))
 
 const saveChanges = async () => {
   v$.value.athlete.$touch()
   if (v$.value.athlete.$invalid) return
-  const athleteDoc = doc(db, 'athletes', commonStore.signedInUser.uid)
-
   try {
-    commonStore.isLoading = true
-    await updateDoc(athleteDoc, athlete.value)
+    commonStore.loadingWholePage = true
+    const user = await userStore.getUser()
+    const { data } = await axios.post(`/user/${user.user_id}`, athlete.value)
+    userStore.loadUser(data.username, data.email, data.id)
   } catch (error) {
     console.log(error)
   } finally {
-    commonStore.isLoading = false
+    commonStore.loadingWholePage = false
   }
 }
 
