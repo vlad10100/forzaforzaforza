@@ -1,6 +1,10 @@
 <template>
   <div>
-    <DatePicker v-model="date" color="gray" @blur="$emit('blur')">
+    <DatePicker
+      v-model="date"
+      color="gray"
+      @blur="$emit('blur')"
+    >
       <template v-slot="{ inputValue, inputEvents }">
         <div class="space-y-2">
           <TextInput
@@ -28,14 +32,14 @@ const { label, errorMessages, getDifference, modelValue } = defineProps({
   label: { type: String },
   errorMessages: { type: String },
   getDifference: { type: Boolean, default: false },
-  modelValue: { type: Date }
+  modelValue: { type: Date },
 })
 
 const date = ref(new Date())
 
 watchEffect(() => {
   if (!modelValue) return
-  date.value = modelValue
+  date.value = new Date(modelValue)
 })
 
 const getDateDifference = (date1: Date, date2: Date) => {
@@ -50,13 +54,13 @@ const getDateDifference = (date1: Date, date2: Date) => {
 
 watch(
   () => date.value,
-  (newDate) => {
+  newDate => {
     emit('update:modelValue', newDate)
 
     if (!getDifference) return
     const difference = getDateDifference(newDate, new Date())
     emit('get-difference', difference)
-  }
+  },
 )
 </script>
 
