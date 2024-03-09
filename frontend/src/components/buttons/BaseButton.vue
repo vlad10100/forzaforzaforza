@@ -1,5 +1,8 @@
 <template>
-  <button @click="$emit('click')" class="flex justify-center items-center">
+  <button
+    @click="$emit('click')"
+    class="flex justify-center items-center"
+  >
     <slot name="left-icon"></slot>
     <p>
       {{ label }}
@@ -13,8 +16,8 @@ const emit = defineEmits(['click'])
 defineProps({
   label: {
     type: String,
-    required: true
-  }
+    required: true,
+  },
 })
 </script>
 

@@ -11,15 +11,21 @@
       class="border flex items-center bg-white rounded-md duration-300 ease-in-out"
       :class="[
         {
-          '!ring-black !border-black !ring-1': inputState.focus
+          '!ring-black !border-black !ring-1': inputState.focus,
         },
         { '!border-red-500': inputState.error },
-        { '!ring-red-500 !ring-1': inputState.focus && inputState.error }
+        { '!ring-red-500 !ring-1': inputState.focus && inputState.error },
       ]"
     >
       <!-- PREFIX -->
-      <div v-if="prefix" :class="{ 'border-r py-2': dividerLeft }">
-        <slot name="prefix" :suffix="prefix">
+      <div
+        v-if="prefix"
+        :class="{ 'border-r py-2': dividerLeft }"
+      >
+        <slot
+          name="prefix"
+          :suffix="prefix"
+        >
           <p class="text-sm px-2">{{ prefix }}</p>
         </slot>
       </div>
@@ -36,18 +42,30 @@
       />
 
       <!-- SUFFIX -->
-      <div v-if="suffix" :class="{ 'border-l py-2': dividerRight }">
-        <slot name="suffix" :suffix="suffix">
+      <div
+        v-if="suffix"
+        :class="{ 'border-l py-2': dividerRight }"
+      >
+        <slot
+          name="suffix"
+          :suffix="suffix"
+        >
           <p class="text-sm px-2">{{ suffix }}</p>
         </slot>
       </div>
     </div>
     <!-- ERROR MESSAGES -->
     <div class="flex items-start justify-between w-full">
-      <div v-if="inputState.error" class="w-full">
+      <div
+        v-if="inputState.error"
+        class="w-full"
+      >
         <p class="text-xs w-full text-red-500">{{ inputState.errorMessage }}</p>
       </div>
-      <div class="w-full" v-if="maxCharacters && typeof modelValue !== 'number'">
+      <div
+        class="w-full"
+        v-if="maxCharacters && typeof modelValue !== 'number'"
+      >
         <p
           class="text-xs text-right"
           :class="{ 'text-red-500': (modelValue?.length || 0) > parseInt(maxCharacters) }"
@@ -72,17 +90,17 @@ const emit = defineEmits(['blur', 'update:modelValue'])
 const props = defineProps({
   required: {
     type: Boolean,
-    default: false
+    default: false,
   },
   prefix: { type: String },
   suffix: { type: String },
   dividerLeft: {
     type: Boolean,
-    default: false
+    default: false,
   },
   dividerRight: {
     type: Boolean,
-    default: false
+    default: false,
   },
   label: { type: String },
   info: { type: String },
@@ -90,9 +108,9 @@ const props = defineProps({
   modelValue: { type: [String, Number] },
   maxCharacters: { type: String },
   errorMessages: {
-    type: String
+    type: String,
   },
-  readOnly: { type: Boolean, default: false }
+  readOnly: { type: Boolean, default: false },
 })
 
 /**
@@ -101,7 +119,7 @@ const props = defineProps({
 const inputState = ref({
   focus: false,
   error: false,
-  errorMessage: ''
+  errorMessage: '',
 })
 
 /**
@@ -115,7 +133,7 @@ const blur = () => {
 
 watch(
   () => props.errorMessages,
-  (newErrorMessage) => {
+  newErrorMessage => {
     if (!newErrorMessage) {
       inputState.value.error = false
       inputState.value.errorMessage = ''
@@ -123,7 +141,7 @@ watch(
     }
     inputState.value.error = true
     inputState.value.errorMessage = newErrorMessage.toString()
-  }
+  },
 )
 </script>
 

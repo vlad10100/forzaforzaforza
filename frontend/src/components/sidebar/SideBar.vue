@@ -23,8 +23,16 @@
               direction="right"
             />
           </div>
-          <div class="flex justify-end" v-if="isSideBarOpen" @click="$emit('toggle')">
-            <IcChevron direction="left" class="text-gray-400 cursor-pointer"> </IcChevron>
+          <div
+            class="flex justify-end"
+            v-if="isSideBarOpen"
+            @click="$emit('toggle')"
+          >
+            <IcChevron
+              direction="left"
+              class="text-gray-400 cursor-pointer"
+            >
+            </IcChevron>
           </div>
         </div>
         <div class="h-8 w-full bg-slate-50 rounded-md flex gap-5 items-center flex-nowrap">
@@ -83,20 +91,20 @@ type UserData = { username: string }
 defineProps({
   isSideBarOpen: {
     type: Boolean,
-    default: false
+    default: false,
   },
   navLinks: {
     type: Array as () => NavLink[],
-    required: true
+    required: true,
   },
   settings: {
     type: Array as () => NavLink[],
-    required: true
+    required: true,
   },
   userData: {
     type: Object as () => UserData,
-    required: true
-  }
+    required: true,
+  },
 })
 
 const selectNavLink = (navlink: string) => {

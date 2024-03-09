@@ -1,15 +1,32 @@
 <template>
   <div>
-    <div class="text-3xl my-10" v-if="!isLoading">Activities</div>
+    <div
+      class="text-3xl my-10"
+      v-if="!isLoading"
+    >
+      Activities
+    </div>
     <div class="space-y-10">
-      <div v-for="(activity, index) in activities" :key="index">
+      <div
+        v-for="(activity, index) in activities"
+        :key="index"
+      >
         <div
           @click="$emit('view-activity', activity.id)"
           class="border rounded-lg shadow-md max-w-[600px] w-full divide-y divide-gray-300"
         >
           <div class="flex justify-center md:px-10 px-5 md:py-5 py-2 bg-gray-50">
-            <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
-              <path :d="activity.svg_path" fill="none" stroke="#e85d04" stroke-width="3"></path>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="200"
+              height="200"
+            >
+              <path
+                :d="activity.svg_path"
+                fill="none"
+                stroke="#e85d04"
+                stroke-width="3"
+              ></path>
             </svg>
           </div>
           <div class="text-left md:px-10 px-2 md:py-5 py-2">
@@ -41,12 +58,12 @@ const emit = defineEmits(['view-activity'])
 defineProps({
   isLoading: {
     type: Boolean,
-    default: false
+    default: false,
   },
   activities: {
     type: Array as () => Activity[],
-    required: true
-  }
+    required: true,
+  },
 })
 </script>
 
