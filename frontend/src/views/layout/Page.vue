@@ -30,12 +30,6 @@ onMounted(() => {
   // Scroll to top
   document.body.scrollTop = 0
   document.documentElement.scrollTop = 0
-
-  // Add a loading effect
-  commonStore.loadingWholePage = true
-  setTimeout(() => {
-    commonStore.loadingWholePage = false
-  }, 1000)
 })
 </script>
 
