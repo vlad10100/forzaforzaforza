@@ -1,19 +1,42 @@
 <template>
   <div>
+    <!-- LOADING -->
+    <div
+      class="fixed inset-0 bg-white z-50 bg-opacity-75 top-16"
+      v-if="commonStore.loadingWholePage"
+    >
+      <div class="h-full flex items-center justify-center">
+        <Loader size="200" />
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
     <slot></slot>
-    <Footer v-if="!commonStore.isLoading" />
+
+    <!-- FOOTER -->
+    <Footer v-if="!commonStore.loadingWholePage" />
   </div>
 </template>
 
 <script setup lang="ts">
+import Loader from '@/components/common/Loader.vue'
 import Footer from '@/components/common/Footer.vue'
 import { useCommonStore } from '@/stores/common'
+import { onMounted } from 'vue'
 
 const commonStore = useCommonStore()
 
-// Scroll to top
-document.body.scrollTop = 0
-document.documentElement.scrollTop = 0
+onMounted(() => {
+  // Scroll to top
+  document.body.scrollTop = 0
+  document.documentElement.scrollTop = 0
+
+  // Add a loading effect
+  commonStore.loadingWholePage = true
+  setTimeout(() => {
+    commonStore.loadingWholePage = false
+  }, 1000)
+})
 </script>
 
 <style scoped></style>
