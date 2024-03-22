@@ -1,0 +1,34 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1710389804677,
+      "tag": "0000_regular_scorpion",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1710670785634,
+      "tag": "0001_silly_mimic",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1710687791830,
+      "tag": "0002_dazzling_drax",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1710688217174,
+      "tag": "0003_magenta_the_twelve",
+      "breakpoints": true
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "scripts": {
+    "dev": "bun run --hot src/index.ts",
+    "db:generate": "drizzle-kit generate:pg --schema=./src/drizzle/schema.ts",
+    "db:migrate": "tsx ./src/drizzle/migrate.ts"
+  },
+  "dependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/cors": "^2.8.17",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/uuid": "^9.0.8",
+    "cors": "^2.8.5",
+    "drizzle-orm": "^0.29.4",
+    "google-auth-library": "^9.6.3",
+    "hono": "^4.0.9",
+    "hono-sessions": "^0.3.4",
+    "postgres": "^3.4.3",
+    "tsx": "^4.7.1"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "bun-types": "^1.0.29",
+    "drizzle-kit": "^0.20.14",
+    "typescript": "latest"
+  }
+}
