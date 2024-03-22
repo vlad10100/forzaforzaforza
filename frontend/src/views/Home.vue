@@ -4,16 +4,25 @@
       <div class="sm-10 lg:mx-20 mx-5 w-full space-y-10">
         <!-- CAROUSEL -->
         <div class="w-full mt-5">
-          <Carousel :slides="carouselSlides" class="h-full w-full cursor-pointer">
+          <Carousel
+            :slides="carouselSlides"
+            class="h-full w-full cursor-pointer"
+          >
             <template #slides="{ slides }">
               <div
                 class="flex-grow-0 h-[500px] flex-shrink-0 w-full p-2"
                 v-for="(slide, index) in slides"
                 :key="index"
               >
-                <div class="h-full w-full rounded-lg overflow-hidden" :class="slide.value">
+                <div
+                  class="h-full w-full rounded-lg overflow-hidden"
+                  :class="slide.value"
+                >
                   <div class="h-full w-full flex items-center justify-center">
-                    <img class="w-auto max-h-full" :src="`/logo/${slide.link}`" />
+                    <img
+                      class="w-auto max-h-full"
+                      :src="`/logo/${slide.link}`"
+                    />
                   </div>
                 </div>
               </div>
@@ -45,20 +54,14 @@ import ItemCard from '@/components/shop/ItemCard.vue'
 import Page from './layout/Page.vue'
 import router from '@/router'
 
-import { onMounted, watchEffect } from 'vue'
+import { onMounted } from 'vue'
 import { useCommonStore } from '@/stores/common'
-
 const commonStore = useCommonStore()
-watchEffect(() => {
-  if (!commonStore.isFetchingUser) {
-    commonStore.isLoading = false
-  }
-})
+
 onMounted(() => {
-  commonStore.isLoading = true
+  commonStore.loadingWholePage = true
   setTimeout(() => {
-    if (commonStore.isFetchingUser) return
-    commonStore.isLoading = false
+    commonStore.loadingWholePage = false
   }, 1000)
 })
 
@@ -67,7 +70,7 @@ const carouselSlides = [
   { label: 'SLIDE 2', value: 'bg-gray-200', link: 'forzaforzaforza.svg' },
   { label: 'SLIDE 5', value: 'bg-gray-100', link: 'violet-forza.svg' },
   { label: 'SLIDE 5', value: 'bg-gray-200', link: 'green-forza.svg' },
-  { label: 'SLIDE 5', value: 'bg-gray-200', link: 'outline-forza.svg' }
+  { label: 'SLIDE 5', value: 'bg-gray-200', link: 'outline-forza.svg' },
 ]
 
 const singlets = [
@@ -76,43 +79,43 @@ const singlets = [
     category: 'run/clothes/top',
     label: 'Forza - Black Singlet',
     price: 1300,
-    link: 'black-singlet.png'
+    link: 'black-singlet.png',
   },
   {
     id: 2,
     category: 'run/clothes/top',
     label: 'Forza - Pink-Green Singlet',
     price: 1500,
-    link: 'pink-singlet.png'
+    link: 'pink-singlet.png',
   },
   {
     id: 3,
     category: 'run/clothes/top',
     label: 'Forza - Black-Red Singlet',
     price: 1500,
-    link: 'red-singlet.png'
+    link: 'red-singlet.png',
   },
   {
     id: 4,
     category: 'run/clothes/top',
     label: 'Forza - Black-Violet Singlet',
     price: 1500,
-    link: 'violet-singlet.png'
+    link: 'violet-singlet.png',
   },
   {
     id: 5,
     category: 'run/clothes/top',
     label: 'Forza - White Singlet',
     price: 1300,
-    link: 'white-singlet.png'
+    link: 'white-singlet.png',
   },
   {
     id: 6,
     category: 'run/clothes/top',
     label: 'Forza - Black-Teal Singlet',
     price: 1500,
-    link: 'teal-singlet.png'
-  }
+    link: 'teal-singlet.png',
+  },
 ]
 
 const viewDetail = (id: Number, category: String) => {

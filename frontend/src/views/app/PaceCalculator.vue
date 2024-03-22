@@ -1,5 +1,5 @@
 <template>
-  <div>Test</div>
+  <div>Pace Calculator</div>
 </template>
 
 <script setup lang="ts"></script>

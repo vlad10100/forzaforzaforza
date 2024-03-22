@@ -10,10 +10,37 @@ const router = createRouter({
       component: () => import('@/views/Home.vue'),
     },
     {
-      name: 'run',
-      path: '/run',
-      component: () => import('@/views/app/Run.vue'),
+      name: 'app',
+      path: '/app/',
+      component: () => import('@/views/app/index.vue'),
       meta: { requiresAuth: true, requiresProfile: true },
+      children: [
+        {
+          name: 'default',
+          path: '',
+          component: () => import('@/views/app/default.vue'),
+        },
+        {
+          name: 'activities',
+          path: 'activities',
+          component: () => import('@/views/app/Activities.vue'),
+        },
+        {
+          name: 'forza-events',
+          path: 'forza-events',
+          component: () => import('@/views/app/ForzaEvents.vue'),
+        },
+        {
+          name: 'training',
+          path: 'training',
+          component: () => import('@/views/app/Training.vue'),
+        },
+        {
+          name: 'pace-calculator',
+          path: 'pace-calculator',
+          component: () => import('@/views/app/PaceCalculator.vue'),
+        },
+      ],
     },
     {
       name: 'calendar',
@@ -50,11 +77,6 @@ const router = createRouter({
       path: '/profile',
       component: () => import('@/views/Profile.vue'),
       meta: { requiresAuth: true },
-    },
-    {
-      name: 'test',
-      path: '/test',
-      component: () => import('@/views/Test.vue'),
     },
     {
       name: 'forza-strava-auth',

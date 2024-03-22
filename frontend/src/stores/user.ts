@@ -7,13 +7,14 @@ export type User = {
   username: string | null
   email: string
   user_id: string
+  connected_to_strava: boolean
 }
 
 export const useUserStore = defineStore('userStore', () => {
   const user = ref<User | null>(null)
 
-  const loadUser = (username: string, email: string, user_id: string) => {
-    const userObject: User = { username, email, user_id }
+  const loadUser = (username: string, email: string, user_id: string, connected_to_strava: boolean = false) => {
+    const userObject: User = { username, email, user_id, connected_to_strava }
     user.value = userObject
     localStorage.setItem(USER_KEY, JSON.stringify(userObject))
   }

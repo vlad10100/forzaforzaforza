@@ -1,5 +1,5 @@
 <template>
-  <div>Test</div>
+  <div>WELCOME TO FORZAFORZAFORZA.com</div>
 </template>
 
 <script setup lang="ts"></script>

@@ -13,8 +13,8 @@
 import BaseButton from '@/components/buttons/BaseButton.vue'
 
 const connectNow = () => {
-  window.location.href =
-    'https://www.strava.com/oauth/authorize?client_id=116994&response_type=code&redirect_uri=http://forzaforzaforza.com/beta/forza-strava-auth&approval_prompt=force&scope=profile:read_all,activity:read_all'
+  const domain = import.meta.env.VITE_APP_ENV === 'DEVELOPMENT' ? 'localhost:2020' : 'forzaforzaforza.com'
+  window.location.href = `https://www.strava.com/oauth/authorize?client_id=116994&response_type=code&redirect_uri=http://${domain}/beta/forza-strava-auth&approval_prompt=force&scope=profile:read_all,activity:read_all`
 }
 </script>
 

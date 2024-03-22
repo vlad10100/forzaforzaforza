@@ -1,10 +1,11 @@
 <template>
-  <div>
+  <div class="pb-10">
     <div
-      class="text-3xl my-10"
+      class="text-3xl mb-10 flex items-center justify-between"
       v-if="!isLoading"
     >
-      Activities
+      <p>Activities</p>
+      <IcRefresh @click="$emit('refresh-activity')" />
     </div>
     <div class="space-y-10">
       <div
@@ -12,7 +13,7 @@
         :key="index"
       >
         <div
-          @click="$emit('view-activity', activity.id)"
+          @click="$emit('view-activity', activity.activity_id)"
           class="border rounded-lg shadow-md max-w-[600px] w-full divide-y divide-gray-300"
         >
           <div class="flex justify-center md:px-10 px-5 md:py-5 py-2 bg-gray-50">
@@ -35,13 +36,13 @@
               <p class="text-lg">{{ activity.name }}</p>
             </div>
             <div class="md:text-sm text-xs">
-              <p>Distance: {{ (activity.distance / 1000).toFixed(2) }} kilometers</p>
-              <p>Avg. pace: {{ activity.average_pace }}</p>
+              <p>Distance: {{ (activity.distance / 1000).toFixed(2) }} km</p>
+              <p>Avg. pace: {{ activity.average_pace }} min/km</p>
               <p>
-                Moving time: <span class="truncate">{{ activity.parsed_moving_time }}</span>
+                Time: <span class="truncate">{{ activity.parsed_moving_time }}</span>
               </p>
-              <p>Avg. heartrate: {{ activity.average_heartrate }}bpm</p>
-              <p>Max heartrate: {{ activity.max_heartrate }}bpm</p>
+              <p>Avg. heartrate: {{ Math.floor(activity.average_heartrate) }} bpm</p>
+              <p>Max heartrate: {{ Math.floor(activity.max_heartrate) }} bpm</p>
             </div>
           </div>
         </div>
@@ -51,11 +52,12 @@
 </template>
 
 <script setup lang="ts">
+import IcRefresh from '@/components/icons/IcRefresh.vue'
 import type { Activity } from '@/stores/strava/parsers'
 
-const emit = defineEmits(['view-activity'])
+const emit = defineEmits(['view-activity', 'refresh-activity'])
 
-defineProps({
+const { activities } = defineProps({
   isLoading: {
     type: Boolean,
     default: false,

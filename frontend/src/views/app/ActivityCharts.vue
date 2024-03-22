@@ -6,15 +6,15 @@
         <div v-html="barChart"></div>
       </div>
 
-      <div>
+      <div v-if="lapsMetric.length > 2">
         <p>Speed</p>
         <div v-html="speed"></div>
       </div>
-      <div>
+      <div v-if="hasHeartrate">
         <p>Heartrate</p>
         <div v-html="lineChart"></div>
       </div>
-      <div>
+      <div v-if="hasCadence">
         <p>Cadence</p>
         <div v-html="cadence"></div>
       </div>
@@ -28,15 +28,24 @@ import { createLineChart } from '@/stores/strava/charts/line'
 import { createBarChart } from '@/stores/strava/charts/bars'
 import type { Lap, Splits } from '@/stores/strava/parsers'
 
-const { splitsMetric, lapsMetric } = defineProps({
+const { splitsMetric, lapsMetric, manual, hasCadence, hasHeartrate } = defineProps({
   splitsMetric: {
     type: Array as () => Splits[],
-    required: true
+    required: true,
   },
   lapsMetric: {
     type: Array as () => Lap[],
-    required: true
-  }
+    required: true,
+  },
+  manual: {
+    type: Boolean,
+  },
+  hasHeartrate: {
+    type: Boolean,
+  },
+  hasCadence: {
+    type: Boolean,
+  },
 })
 const lineChart = ref('')
 const cadence = ref('')
@@ -44,20 +53,25 @@ const barChart = ref('')
 const speed = ref('')
 
 onMounted(() => {
-  const distanceSplits = splitsMetric.map((split) => split.split - 1)
+  if (manual) return
+  const distanceSplits = splitsMetric.map(split => split.split - 1)
 
-  const averageHR = { label: 'avg. HR', value: 140 } // this will vary
-  const line = createLineChart(lapsMetric, distanceSplits, 'average_heartrate', averageHR)
-  lineChart.value = line?.outerHTML || ''
+  const bar = createBarChart(splitsMetric, hasHeartrate)
+  barChart.value = bar?.outerHTML || ''
 
-  const cadenceLine = createLineChart(lapsMetric, distanceSplits, 'average_cadence')
-  cadence.value = cadenceLine?.outerHTML || ''
-
-  const paceLine = createLineChart(lapsMetric, distanceSplits, 'average_watts')
+  const paceLine = createLineChart(lapsMetric, distanceSplits, 'average_speed')
   speed.value = paceLine?.outerHTML || ''
 
-  const bar = createBarChart(splitsMetric)
-  barChart.value = bar?.outerHTML || ''
+  if (hasHeartrate) {
+    const averageHR = { label: 'avg. HR', value: 140 } // this will vary
+    const line = createLineChart(lapsMetric, distanceSplits, 'average_heartrate', averageHR)
+    lineChart.value = line?.outerHTML || ''
+  }
+
+  if (hasCadence) {
+    const cadenceLine = createLineChart(lapsMetric, distanceSplits, 'average_cadence')
+    cadence.value = cadenceLine?.outerHTML || ''
+  }
 })
 </script>
 

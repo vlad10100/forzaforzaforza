@@ -1,9 +1,11 @@
 import axios from 'axios'
 import type { App } from 'vue'
 
+const baseUrl = import.meta.env.VITE_APP_ENV === 'DEVELOPMENT' ? 'http://localhost:3000/' : ''
+
 const axiosWithErrorInterceptor = axios.create({
   withCredentials: true,
-  baseURL: 'http://localhost:3000/',
+  baseURL: baseUrl,
 })
 
 // axiosWithErrorInterceptor.interceptors.response.use(

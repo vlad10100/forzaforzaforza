@@ -3,7 +3,10 @@
     <div class="h-screen flex justify-center mt-20">
       <div>
         <div class="flex gap-5 mb-10">
-          <IcChevron direction="left" @click="goBack" />
+          <IcChevron
+            direction="left"
+            @click="goBack"
+          />
           <p>{{ merch?.category }} (create Breadcrumbs)</p>
         </div>
 
@@ -35,16 +38,11 @@ import IcChevron from '@/components/icons/IcChevron.vue'
 import { useCommonStore } from '@/stores/common'
 
 const commonStore = useCommonStore()
-watchEffect(() => {
-  if (!commonStore.isFetchingUser) {
-    commonStore.isLoading = false
-  }
-})
+
 onMounted(() => {
-  commonStore.isLoading = true
+  commonStore.loadingWholePage = true
   setTimeout(() => {
-    if (commonStore.isFetchingUser) return
-    commonStore.isLoading = false
+    commonStore.loadingWholePage = false
   }, 1000)
 })
 

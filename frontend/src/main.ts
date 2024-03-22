@@ -11,7 +11,7 @@ import axios from '@/core/axios'
 
 const app = createApp(App)
 
-const CLIENT_ID = '144609460325-khh5h8h6erb15v3rjpjbcrh8qheg8sv2.apps.googleusercontent.com'
+const CLIENT_ID = import.meta.env.VITE_APP_GOOGLE_CLIENT_ID
 
 app.use(axios)
 

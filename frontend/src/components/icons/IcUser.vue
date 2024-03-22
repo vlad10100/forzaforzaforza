@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 const { size } = defineProps({
-  size: { type: [String, Number], default: '24' }
+  size: { type: [String, Number], default: '24' },
 })
 </script>
 

@@ -236,7 +236,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, watchEffect, computed, inject, onMounted } from 'vue'
+import { ref, watch, computed, inject } from 'vue'
 import { useWindowSize } from '@vueuse/core'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
@@ -283,8 +283,8 @@ const navLinks = [
     value: '/',
   },
   {
-    label: 'run',
-    value: '/run',
+    label: 'App',
+    value: '/app',
   },
   {
     label: 'sale!',
@@ -316,7 +316,6 @@ const userOptions = [
 
 const signedInUser = computed(() => {
   if (!user.value) return null
-  user.value.connected_to_strava = false
   return user.value
 })
 
@@ -347,8 +346,8 @@ const logOut = async () => {
 }
 
 const connectStrava = () => {
-  window.location.href =
-    'https://www.strava.com/oauth/authorize?client_id=116994&response_type=code&redirect_uri=http://forzaforzaforza.com/beta/forza-strava-auth&approval_prompt=force&scope=profile:read_all,activity:read_all'
+  const domain = import.meta.env.VITE_APP_ENV === 'DEVELOPMENT' ? 'localhost:2020' : 'forzaforzaforza.com'
+  window.location.href = `https://www.strava.com/oauth/authorize?client_id=116994&response_type=code&redirect_uri=http://${domain}/beta/forza-strava-auth&approval_prompt=force&scope=profile:read_all,activity:read_all`
 }
 </script>
 

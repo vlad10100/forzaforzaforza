@@ -27,7 +27,7 @@ RUN rm -rf /usr/share/nginx/html/*
 # Copy from the build stage
 COPY --from=builder /dist /usr/share/nginx/html/beta
 
-# Informs Docker that the container listens on port 8080 at runtime
+# Informs Docker that the container listens on port 2020 at runtime
 EXPOSE 2020
 
 # Sets the container to run NGINX in the foreground

@@ -1,5 +1,8 @@
 import { decode } from '@googlemaps/polyline-codec'
 import * as d3 from 'd3'
+import * as dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
+dayjs.extend(duration)
 
 export const parseDate = (date: string) => {
   const timestamp = new Date(date)
@@ -7,17 +10,14 @@ export const parseDate = (date: string) => {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
+    day: 'numeric',
   })
   return parsedDate
 }
 
 export const parseMovingTime = (seconds: number) => {
-  const hours = Math.floor(seconds / 3600)
-  const minutes = Math.floor((seconds % 3600) / 60)
-  const remainingSeconds = seconds % 60
-
-  return hours + ' hrs ' + minutes + ' mins ' + remainingSeconds + ' secs'
+  const duration = dayjs.duration(seconds, 'seconds')
+  return duration.format('HH:mm:ss')
 }
 
 export const parseAveragePace = (pace: number) => {
@@ -41,8 +41,8 @@ export const createSvgCode = (polylineSummary: string, size: number) => {
     y: [number, number] | [undefined, undefined]
   }
   const boundingBox: BoundingBox = {
-    x: d3.extent(decodedPolyline, (d) => d[1]),
-    y: d3.extent(decodedPolyline, (d) => d[0])
+    x: d3.extent(decodedPolyline, d => d[1]),
+    y: d3.extent(decodedPolyline, d => d[0]),
   }
 
   const xScale = d3
@@ -55,8 +55,8 @@ export const createSvgCode = (polylineSummary: string, size: number) => {
     .range([size - 5, 5])
   const pathGenerator = d3
     .line()
-    .x((d) => xScale(d[1]))
-    .y((d) => yScale(d[0]))
+    .x(d => xScale(d[1]))
+    .y(d => yScale(d[0]))
 
   const generatedPath = pathGenerator(decodedPolyline)
   if (!generatedPath) return ''
@@ -84,13 +84,13 @@ export const parseSplitsMetric = (metrics: Splits[]) => {
       elapsed_time: split.elapsed_time,
       moving_time: split.moving_time,
       distance: split.distance,
-      split: split.split
+      split: split.split,
     }
   })
 }
 
 export const parseLapsMetric = (metrics: Lap[]) => {
-  return metrics.map((lap) => {
+  return metrics.map(lap => {
     return {
       split: lap.split,
       lap_index: lap.lap_index,
@@ -101,7 +101,7 @@ export const parseLapsMetric = (metrics: Lap[]) => {
       distance: lap.distance,
       average_cadence: lap.average_cadence,
       pace_zone: lap.pace_zone + 1,
-      average_speed: convertToMinPerKm(lap.average_speed)
+      average_speed: convertToMinPerKm(lap.average_speed),
     }
   })
 }
@@ -150,7 +150,8 @@ export type Activity = {
   type: string
   sport_type: string
   workout_type: number
-  id: number
+  activity_id: number
+  activity_date: string
   start_date: string
   start_date_local: string
   timezone: string
@@ -195,6 +196,7 @@ export type Activity = {
   parsed_average_pace: string
   max_heartrate: number
   average_heartrate: number
+  summary_polyline: string
 }
 
 export type Lap = {

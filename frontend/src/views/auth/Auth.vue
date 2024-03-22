@@ -75,11 +75,11 @@ const callback = async (response: Response) => {
   }
 
   try {
-    commonStore.isLoading = true
+    commonStore.loadingWholePage = true
     const { data } = await axios.post('/auth', { google_user_id: credentials.sub, email: credentials.email })
 
     // set the signed in user
-    userStore.loadUser(data.user.username, data.user.email, data.user.id)
+    userStore.loadUser(data.user.username, data.user.email, data.user.id, data.user.connected_to_strava)
 
     if (data.new_user) {
       router.push('/profile')
@@ -89,7 +89,7 @@ const callback = async (response: Response) => {
   } catch (error) {
     console.log(error)
   } finally {
-    commonStore.isLoading = false
+    commonStore.loadingWholePage = false
   }
 }
 </script>

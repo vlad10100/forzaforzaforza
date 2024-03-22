@@ -106,7 +106,6 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watchEffect, inject } from 'vue'
-import { useRouter } from 'vue-router'
 
 import { useCommonStore } from '@/stores/common'
 import { useUserStore } from '@/stores/user'
@@ -119,7 +118,7 @@ import { useUsernameValidation, useDateValidation, useValidationErrors, transfor
 import type { Axios } from 'axios'
 const axios = inject('axios') as Axios
 
-import Page from './layout/Page.vue'
+import Page from '@/views/layout/Page.vue'
 import TextInput from '@/components/inputs/TextInput.vue'
 import CheckBox from '@/components/inputs/CheckBox.vue'
 import Calendar from '@/components/inputs/Calendar.vue'
@@ -132,7 +131,6 @@ const GENDER = [
 
 const commonStore = useCommonStore()
 const userStore = useUserStore()
-const router = useRouter()
 
 const athlete = ref()
 const selectedGender = ref('')
@@ -191,8 +189,8 @@ const saveChanges = async () => {
   if (v$.value.athlete.$invalid) return
   try {
     commonStore.loadingWholePage = true
-    const user = await userStore.getUser()
-    const { data } = await axios.post(`/user/${user.user_id}`, athlete.value)
+    const user = userStore.getUser()
+    const { data } = await axios.post(`/user/${user?.user_id}`, athlete.value)
     userStore.loadUser(data.username, data.email, data.id)
   } catch (error) {
     console.log(error)

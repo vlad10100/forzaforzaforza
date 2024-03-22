@@ -53,16 +53,14 @@
           <div class="p-3 overflow-hidden space-y-3">
             <SideBarLinks
               v-for="(navlink, index) in navLinks"
-              @click="selectNavLink(navlink.value)"
               :key="index"
               :navlink="navlink"
-              :is-selected="selectedNavLink === navlink.value"
             ></SideBarLinks>
           </div>
         </div>
         <hr />
 
-        <div class="p-3 overflow-hidden space-y-3">
+        <!-- <div class="p-3 overflow-hidden space-y-3">
           <SideBarLinks
             v-for="(navlink, index) in settings"
             @click="selectNavLink(navlink.value)"
@@ -70,7 +68,7 @@
             :navlink="navlink"
             :is-selected="selectedNavLink === navlink.value"
           ></SideBarLinks>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -82,11 +80,10 @@ import IcSquares from '@/components/icons/IcSquares.vue'
 import SideBarLinks from '@/components/sidebar/SideBarLinks.vue'
 import IcUser from '../icons/IcUser.vue'
 import { ref, onMounted } from 'vue'
+import type { User } from '@/stores/user'
 
 const NAV_LINK_KEY = 'NAV_LINK_KEY'
-const selectedNavLink = ref('')
 type NavLink = { label: string; value: string }
-type UserData = { username: string }
 
 defineProps({
   isSideBarOpen: {
@@ -102,19 +99,9 @@ defineProps({
     required: true,
   },
   userData: {
-    type: Object as () => UserData,
+    type: Object as () => User,
     required: true,
   },
-})
-
-const selectNavLink = (navlink: string) => {
-  selectedNavLink.value = navlink
-  localStorage.setItem(NAV_LINK_KEY, selectedNavLink.value)
-}
-onMounted(() => {
-  const navlink = localStorage.getItem(NAV_LINK_KEY)
-  if (!navlink) return
-  selectedNavLink.value = navlink
 })
 </script>
 

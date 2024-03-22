@@ -1,22 +1,19 @@
 <template>
-  <div>SALE</div>
+  <Page>
+    <div class="h-screen">SALE</div>
+  </Page>
 </template>
 
 <script setup lang="ts">
+import Page from './layout/Page.vue'
 import { onMounted, watchEffect } from 'vue'
 import { useCommonStore } from '@/stores/common'
-
 const commonStore = useCommonStore()
-watchEffect(() => {
-  if (!commonStore.isFetchingUser) {
-    commonStore.isLoading = false
-  }
-})
+
 onMounted(() => {
-  commonStore.isLoading = true
+  commonStore.loadingWholePage = true
   setTimeout(() => {
-    if (commonStore.isFetchingUser) return
-    commonStore.isLoading = false
+    commonStore.loadingWholePage = false
   }, 1000)
 })
 </script>
